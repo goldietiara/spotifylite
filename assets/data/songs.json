@@ -1,0 +1,162 @@
+[
+  {
+    "id": 1,
+    "name": "Secret Base but is it okay if it's lofi?",
+    "album": "Secret Base but is it okay if it's lofi?",
+    "artist": "Kijugo",
+    "artistId": 1,
+    "img": "https://i.scdn.co/image/ab67616d0000b273b850fa2d87ca7b75824cd189"
+  },
+  {
+    "id": 2,
+    "name": "Unravel but is it okay if it's lofi?",
+    "album": "Unravel but is it okay if it's lofi?",
+    "artist": "Kijugo",
+    "artistId": 1,
+    "img": "https://i.scdn.co/image/ab67616d00001e0287fd68489d6c18a2a7571ced"
+  },
+  {
+    "id": 3,
+    "name": "My War but is it okay if it's lofi?",
+    "album": "My War but is it okay if it's lofi?",
+    "artist": "Kijugo",
+    "artistId": 1,
+    "img": "https://i.scdn.co/image/ab67616d00001e028517ac2150643a73b166ef87"
+  },
+  {
+    "id": 4,
+    "name": "Lost In Paradise but is it okay if it's lofi?",
+    "album": "Lost In Paradise but is it okay if it's lofi?",
+    "artist": "Kijugo",
+    "artistId": 1,
+    "img": "https://i.scdn.co/image/ab67616d0000b273b7b75f4c8824fd48d0088886"
+  },
+  {
+    "id": 5,
+    "name": "Departure - Hunter x Hunter Lofi",
+    "album": "Departure - Hunter x Hunter Lofi",
+    "artist": "A Samurai In Tokyo",
+    "artistId": 2,
+    "img": "https://i.scdn.co/image/ab67616d0000b273a3961a304d8d4a161a8e653f"
+  },
+  {
+    "id": 6,
+    "name": "Seasons in the Sun",
+    "album": "Seasons in the Sun",
+    "artist": "Terry Jacks",
+    "artistId": 3,
+    "img": "https://i.scdn.co/image/ab67616d00001e02ce17c265d1fad1eab7526cfb"
+  },
+  {
+    "id": 7,
+    "name": "Time in a Bottle",
+    "album": "Time in a Bottle",
+    "artist": "Jim Croce",
+    "artistId": 4,
+    "img": "https://i.scdn.co/image/ab67616d00001e0298078d325c25a5ac4081cfba"
+  },
+  {
+    "id": 8,
+    "name": "Only in My Dreams - Live",
+    "album": "Only in My Dreams - Live",
+    "artist": "The Marías",
+    "artistId": 5,
+    "img": "https://i.scdn.co/image/ab67616d0000b273fc0257d56788c1b1500974cc"
+  },
+  {
+    "id": 9,
+    "name": "Crocodile Tears",
+    "album": "Crocodile Tears",
+    "artist": "Suzanna Son",
+    "artistId": 6,
+    "img": "https://i.scdn.co/image/ab67616d0000b27338b9ba68af98c3c0855b47ee"
+  },
+  {
+    "id": 10,
+    "name": "As the World Caves In - Acoustic",
+    "album": "As the World Caves In - Acoustic",
+    "artist": "Matt Maltese",
+    "artistId": 7,
+    "img": "https://i.scdn.co/image/ab67616d0000b27395b4785c16667bd8f601c25a"
+  },
+  {
+    "id": 11,
+    "name": "Chop",
+    "album": "Chop",
+    "artist": "Vundabar",
+    "artistId": 8,
+    "img": "https://i.scdn.co/image/ab67616d0000b273b7c802fd9a1ebf8b1ddb3746"
+  },
+  {
+    "id": 12,
+    "name": "Cradles",
+    "album": "Cradles",
+    "artist": "Sub Urban",
+    "artistId": 9,
+    "img": "https://i.scdn.co/image/ab67616d0000b273fb032fd9672efc5ac88bd03f"
+  },
+  {
+    "id": 13,
+    "name": "I Heard A Cry - Radio Edit",
+    "album": "I Heard A Cry - Radio Edit",
+    "artist": "Calva Louise",
+    "artistId": 10,
+    "img": "https://i.scdn.co/image/ab67616d0000b273a51fc7c9e1182872fa5bb483"
+  },
+  {
+    "id": 14,
+    "name": "Alien Blues",
+    "album": "Alien Blues",
+    "artist": "Vundabar",
+    "artistId": 8,
+    "img": "https://i.scdn.co/image/ab67616d0000b273b7c802fd9a1ebf8b1ddb3746"
+  },
+  {
+    "id": 15,
+    "name": "Can't Stop",
+    "album": "Can't Stop",
+    "artist": "Red Hot Chili Peppers",
+    "artistId": 11,
+    "img": "https://i.scdn.co/image/ab67616d00001e02de1af2785a83cc660155a0c4"
+  },
+  {
+    "id": 16,
+    "name": "...baby one more time",
+    "album": "...baby one more time",
+    "artist": "The Marías",
+    "artistId": 12,
+    "img": "https://i.scdn.co/image/ab67616d0000b273e9339dbb86757df162fad9d5"
+  },
+  {
+    "id": 17,
+    "name": "Tú",
+    "album": "Tú",
+    "artist": "maye",
+    "artistId": 13,
+    "img": "https://i.scdn.co/image/ab67616d00001e02e535e8147235d96bb734ba41"
+  },
+  {
+    "id": 18,
+    "name": "American Blonde",
+    "album": "American Blonde",
+    "artist": "Dreamgirl",
+    "artistId": 14,
+    "img": "https://i.scdn.co/image/ab67616d0000b2739bb191900a230da750c4fc1d"
+  },
+  {
+    "id": 19,
+    "name": "Ayayai",
+    "album": "Ayayai",
+    "artist": "Daniela Andrade",
+    "artistId": 15,
+    "img": "https://i.scdn.co/image/ab67616d0000b273a58fced8e40aa848e075b252"
+  },
+  {
+    "id": 20,
+    "name": "Stranger Feelings",
+    "album": "Stranger Feelings",
+    "artist": "Dreamgirl",
+    "artistId": 14,
+    "img": "https://i.scdn.co/image/ab67616d0000b273d531c4f8109c10dbb42d1076"
+  }
+]

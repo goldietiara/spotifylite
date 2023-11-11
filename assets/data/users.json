@@ -1,0 +1,40 @@
+[
+  {
+    "id": 1,
+    "name": "owy",
+    "profilePicture": "https://i.pinimg.com/564x/96/d9/1f/96d91f6b2b948c988b1bea9e8b3bfa0c.jpg",
+    "following": [{ "id": 2 }],
+    "followers": [{ "id": 2 }],
+    "playlist": [{ "id": 11 }, { "id": 12 }, { "id": 13 }],
+    "likedSongs": [
+      { "id": 1 },
+      { "id": 7 },
+      { "id": 3 },
+      { "id": 16 },
+      { "id": 10 },
+      { "id": 6 },
+      { "id": 12 },
+      { "id": 20 }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "ry",
+    "profilePicture": "https://i.pinimg.com/564x/d1/83/8e/d1838ec5f0d188e962aff86c1502f619.jpg",
+    "following": [{ "id": 1 }],
+    "followers": [{ "id": 1 }],
+    "playlist": [{ "id": 21 }, { "id": 22 }, { "id": 23 }],
+    "likedSongs": [
+      { "id": 2 },
+      { "id": 8 },
+      { "id": 4 },
+      { "id": 6 },
+      { "id": 12 },
+      { "id": 1 },
+      { "id": 7 },
+      { "id": 3 },
+      { "id": 16 },
+      { "id": 10 }
+    ]
+  }
+]

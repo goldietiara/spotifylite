@@ -1,6 +1,7 @@
 <script setup>
 const { PlaylistSongs } = defineProps(["PlaylistSongs"]);
 const q = ref("");
+
 const searchIcon = ref(false);
 
 const filteredRows = computed(() => {
@@ -96,7 +97,6 @@ const items = [
 
     <div
       class="mr-0 h-[32px] w-[32px] rounded-full flex justify-center items-center hover:bg-white/10 hover:cursor-pointer transition-all duration-300"
-      :class="!searchIcon && 'mr-10'"
       @click="searchIcon = !searchIcon"
       v-if="!searchIcon"
     >

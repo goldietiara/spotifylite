@@ -10,19 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Playlist {
-  id                  Int                @id @default(autoincrement())
-  userId              String             @db.Uuid
-  name                String
-  description         String
-  image               String
-  createdAt           DateTime           @default(now())
-  songs               Song[]
-  likes               User[]
-  UserLikedPlaylist   UserLikedPlaylist? @relation(fields: [userLikedPlaylistId], references: [id], onDelete: Cascade)
-  userLikedPlaylistId Int?
-}
-
 model User {
   id            Int        @id @default(autoincrement())
   name          String
@@ -31,7 +18,6 @@ model User {
   image         String
   location      String
   playlist      Playlist[]
-  likedSongs    Song[]
   following     User[]     @relation("UserFollowing")
   followers     User[]     @relation("UserFollowing")
   isArtist      Boolean
@@ -39,10 +25,24 @@ model User {
   Artist        Artist?    @relation(fields: [artistId], references: [id])
 }
 
-model UserLikedPlaylist {
+model userProfile {
   id            Int        @id @default(autoincrement())
   userId        String     @db.Uuid
+  likedSongs    Song[]
   likedPlaylist Playlist[]
+}
+
+model Playlist {
+  id            Int          @id @default(autoincrement())
+  userId        String       @db.Uuid
+  name          String
+  description   String
+  image         String
+  createdAt     DateTime     @default(now())
+  songs         Song[]
+  likes         User[]
+  userProfileId Int?
+  userProfile   userProfile? @relation(fields: [userProfileId], references: [id])
 }
 
 model Artist {
@@ -56,15 +56,15 @@ model Artist {
 }
 
 model Song {
-  id         Int       @id @default(autoincrement())
-  artistId   String    @db.Uuid
-  name       String
-  playlistId Int?
-  Playlist   Playlist? @relation(fields: [playlistId], references: [id])
-  userId     Int?
-  User       User?     @relation(fields: [userId], references: [id])
-  albumId    Int?
-  Album      Album?    @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  id            Int          @id @default(autoincrement())
+  artistId      String       @db.Uuid
+  name          String
+  playlistId    Int?
+  Playlist      Playlist?    @relation(fields: [playlistId], references: [id])
+  albumId       Int?
+  Album         Album?       @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  userProfileId Int?
+  userProfile   userProfile? @relation(fields: [userProfileId], references: [id])
 }
 
 model Album {

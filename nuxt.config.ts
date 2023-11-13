@@ -23,7 +23,7 @@ export default defineNuxtConfig({
     },
   },
   ui: {
-    icons: ["majesticons", "heroicons"],
+    icons: ["majesticons", "heroicons", "ph"],
   },
   pinia: {
     storesDirs: ["./stores/**"],

@@ -9,3 +9,71 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Playlist {
+  id                  Int                @id @default(autoincrement())
+  userId              String             @db.Uuid
+  name                String
+  description         String
+  image               String
+  createdAt           DateTime           @default(now())
+  songs               Song[]
+  likes               User[]
+  UserLikedPlaylist   UserLikedPlaylist? @relation(fields: [userLikedPlaylistId], references: [id], onDelete: Cascade)
+  userLikedPlaylistId Int?
+}
+
+model User {
+  id            Int        @id @default(autoincrement())
+  name          String
+  email         String     @unique
+  emailVerified DateTime
+  image         String
+  location      String
+  playlist      Playlist[]
+  likedSongs    Song[]
+  following     User[]     @relation("UserFollowing")
+  followers     User[]     @relation("UserFollowing")
+  isArtist      Boolean
+  artistId      Int?
+  Artist        Artist?    @relation(fields: [artistId], references: [id])
+}
+
+model UserLikedPlaylist {
+  id            Int        @id @default(autoincrement())
+  userId        String     @db.Uuid
+  likedPlaylist Playlist[]
+}
+
+model Artist {
+  id        Int     @id @default(autoincrement())
+  userId    String  @db.Uuid
+  name      String
+  image     String
+  header    String
+  followers User[]
+  album     Album[]
+}
+
+model Song {
+  id         Int       @id @default(autoincrement())
+  artistId   String    @db.Uuid
+  name       String
+  playlistId Int?
+  Playlist   Playlist? @relation(fields: [playlistId], references: [id])
+  userId     Int?
+  User       User?     @relation(fields: [userId], references: [id])
+  albumId    Int?
+  Album      Album?    @relation(fields: [albumId], references: [id], onDelete: Cascade)
+}
+
+model Album {
+  id        Int      @id @default(autoincrement())
+  name      String
+  image     String
+  genre     String
+  createdAt DateTime @default(now())
+  songs     Song[]
+  artistId  Int?
+  Artist    Artist?  @relation(fields: [artistId], references: [id], onDelete: Cascade)
+}

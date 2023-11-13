@@ -1,8 +1,5 @@
 <template>
   <div class="w-full h-full">
-
-    <h1>hennlo
-      
-    </h1>
+    <p>wawa</p>
   </div>
 </template>

@@ -2,13 +2,34 @@
 definePageMeta({
   layout: "login-signup",
 });
+
+// import { UseSupabaseClient, useSupabaseUser } from "@supabase/supabase-js";
+
+const client = useSupabaseClient();
+const userSession = useSupabaseUser();
+
+watchEffect(() => {
+  if (userSession.value) {
+    console.log(user.value);
+  }
+});
+
+const login = async (prov) => {
+  const { data, error } = await client.auth.signInWithOAuth({
+    provider: prov,
+    redirectTo: window.location.origin,
+  });
+  if (error) console.log(`failed to login: ${error}`);
+};
 </script>
 
 <template>
   <div
-    class="py-10 flex-col flex gap-5 items-center w-[800px] h-full rounded-lg"
+    class="py-5 md:py-10 flex-col flex gap-5 items-center w-[800px] h-full rounded-lg"
   >
-    <h1 class="text-5xl font-bold py-10">Log in to Spotify</h1>
+    <h1 class="text-center leading-snug text-5xl font-bold py-10">
+      Log in to Spotify
+    </h1>
     <UButton
       size="xl"
       color="black"
@@ -21,6 +42,7 @@ definePageMeta({
       <p class="pr-5">Continue with Google</p>
     </UButton>
     <UButton
+      @click="login('github')"
       size="xl"
       color="black"
       variant="solid"
@@ -31,5 +53,12 @@ definePageMeta({
       ><UIcon class="text-xl mx-3" name="i-ph-github-logo-fill" />
       <p class="pr-5">Continue with Google</p>
     </UButton>
+    <p class="text-gray-400 text-sm">
+      Don't have an account?
+      <a
+        class="text-gray-200 underline underline-2 underline-offset-2 hover:text-green-500 hover:cursor-pointer"
+        >Sign up for Spotify</a
+      >
+    </p>
   </div>
 </template>

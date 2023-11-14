@@ -3,14 +3,12 @@ definePageMeta({
   layout: "login-signup",
 });
 
-// import { UseSupabaseClient, useSupabaseUser } from "@supabase/supabase-js";
-
 const client = useSupabaseClient();
-const userSession = useSupabaseUser();
+const user = useSupabaseUser();
 
 watchEffect(() => {
-  if (userSession.value) {
-    console.log(user.value);
+  if (user.value) {
+    return navigateTo("/");
   }
 });
 
@@ -19,11 +17,13 @@ const login = async (prov) => {
     provider: prov,
     redirectTo: window.location.origin,
   });
-  if (error) console.log(`failed to login: ${error}`);
+
+  if (error) console.log(error);
 };
 </script>
 
 <template>
+  <p>{{ userSession }}</p>
   <div
     class="py-5 md:py-10 flex-col flex gap-5 items-center w-[800px] h-full rounded-lg"
   >
@@ -31,6 +31,7 @@ const login = async (prov) => {
       Log in to Spotify
     </h1>
     <UButton
+      @click="login('google')"
       size="xl"
       color="black"
       variant="solid"
@@ -51,7 +52,7 @@ const login = async (prov) => {
       }"
       class="py-4 dark:bg-black dark:text-gray-200 outline outline-1 outline-gray-400 hover:outline-gray-200 dark:hover:bg-black"
       ><UIcon class="text-xl mx-3" name="i-ph-github-logo-fill" />
-      <p class="pr-5">Continue with Google</p>
+      <p class="pr-5">Continue with Github</p>
     </UButton>
     <p class="text-gray-400 text-sm">
       Don't have an account?

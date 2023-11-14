@@ -1,6 +1,15 @@
 <script setup>
 import NavBar from "../components/nav-bar.vue";
 import Footer from "../components/footer.vue";
+
+const userSession = useSupabaseUser();
+const client = useSupabaseClient();
+
+watchEffect(() => {
+  if (!userSession.value) {
+    return navigateTo("/auth");
+  }
+});
 </script>
 <template>
   <PrimeSplitter
@@ -33,7 +42,7 @@ import Footer from "../components/footer.vue";
       <div
         class="w-full h-full rounded-lg bg-gradient-to-b from-slate-700/50 to-zinc-900 overflow-y-auto container relative z-0"
       >
-        <NavBar />
+        <NavBar :userSession="userSession" :client="client" />
         <slot></slot>
       </div>
     </PrimeSplitterPanel>

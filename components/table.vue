@@ -28,6 +28,7 @@ const columns = [
     key: "id",
     label: "#",
     sortable: false,
+    class: " w-[50px]",
   },
   {
     key: "name",
@@ -69,17 +70,15 @@ const items = [
 <template>
   <div class="flex px-3 py-3.5 pt-5 justify-between items-center">
     <div class="flex items-center gap-3">
-      <div class="h-[80px] w-[80px] flex justify-center items-center">
-        <UButton
-          size="xl"
-          :ui="{
-            rounded: 'rounded-full',
-          }"
-          class="p-4 hover:p-5 transition-all ease-out duration-100 flex justify-center items-center"
-        >
-          <UIcon name="i-heroicons-play-20-solid" class="text-3xl" />
-        </UButton>
-      </div>
+      <UButton
+        size="xl"
+        :ui="{
+          rounded: 'rounded-full',
+        }"
+        class="p-4 hover:scale-110 transition-all ease-out duration-100"
+      >
+        <UIcon name="i-heroicons-play-20-solid" class="text-3xl" />
+      </UButton>
       <UDropdown
         :items="items"
         :popper="{ placement: 'bottom-start' }"
@@ -101,7 +100,7 @@ const items = [
       v-if="!searchIcon"
     >
       <UIcon
-        name="i-heroicons-magnifying-glass-20-solid "
+        name="i-heroicons-magnifying-glass-20-solid"
         class="bg-gray-400 flex-shrink-0 h-5 w-5"
       />
     </div>
@@ -139,24 +138,7 @@ const items = [
     :rows="filteredRows"
     :columns="columns"
     :ui="{
-      divide: 'divide-y divide-gray-300 dark:divide-gray-400/60',
-      tbody: 'divide-transparent dark:divide-transparent w-full',
-      thead: 'text-left',
-      base: 'min-w-full w-full table-auto',
-      tr: {
-        base: 'group hover:bg-gray-400/5 ',
-      },
-      th: {
-        base: 'hover:bg-transparent',
-        color: 'text-gray-400 dark:text-gray-400',
-        font: 'font-normal',
-      },
-      td: {
-        padding: 'px-3 py-2',
-      },
       default: {
-        sortAscIcon: 'i-heroicons-chevron-up-20-solid',
-        sortDescIcon: 'i-heroicons-chevron-down-20-solid',
         sortButton: {
           icon: '',
         },
@@ -167,25 +149,23 @@ const items = [
     :sort-button="{
       color: 'black',
       size: 'lg',
-      square: false,
       ui: {
-        rounded: 'rounded-full',
         base: 'hover:text-white',
       },
     }"
   >
     <template #id-data="{ row, index }">
-      <div class="w-[30px] flex justify-start">
-        {{ index + 1 }}
-      </div>
+      {{ index + 1 }}
     </template>
     <template #name-data="{ row }">
-      <div
-        class="flex justify-start gap-4 items-center min-w-0 w-full overflow-hidden"
-      >
+      <div class="flex justify-start gap-4 items-center">
         <img class="w-[50px] h-[50px] bg-pink-200 rounded-sm" :src="row.img" />
         <div>
-          <h1 class="font-semibold text-gray-200">{{ row.name }}</h1>
+          <h1
+            class="font-semibold text-gray-200 whitespace-nowrap text-ellipsis overflow-hidden"
+          >
+            {{ row.name }}
+          </h1>
           <p>{{ row.artist }}</p>
         </div>
       </div>

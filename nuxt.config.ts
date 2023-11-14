@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  pages: true,
   modules: ["@nuxt/ui", "nuxt-primevue", "@pinia/nuxt", "@nuxtjs/supabase"],
   css: [
     "~/assets/css/main.css",
@@ -11,6 +11,7 @@ export default defineNuxtConfig({
       bucketUrl: process.env.BUCKETURL,
     },
   },
+  devtools: { enabled: false },
   primevue: {
     options: {
       ripple: true,
@@ -32,5 +33,12 @@ export default defineNuxtConfig({
   },
   pinia: {
     storesDirs: ["./stores/**"],
+  },
+  supabase: {
+    redirectOptions: {
+      login: "/login",
+      callback: "/",
+      exclude: [],
+    },
   },
 });

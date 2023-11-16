@@ -11,8 +11,8 @@ export default defineEventHandler(async (event) => {
       dateOfBirth: body.dateOfBirth,
       image: body.image,
       location: body.location,
-      onBoarding: body.onBoarding,
-      isArtist: body.isArtist,
+      onBoarding: false,
+      isArtist: false,
     },
   });
 

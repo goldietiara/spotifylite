@@ -11,19 +11,19 @@ datasource db {
 }
 
 model User {
-  id            Int        @id @default(autoincrement())
-  name          String
-  email         String     @unique
-  emailVerified DateTime
-  image         String
-  location      String
-  onBoarding    Boolean
-  playlist      Playlist[]
-  following     User[]     @relation("UserFollowing")
-  followers     User[]     @relation("UserFollowing")
-  isArtist      Boolean
-  artistId      Int?
-  Artist        Artist?    @relation(fields: [artistId], references: [id])
+  id          Int        @id @default(autoincrement())
+  name        String
+  email       String     @unique
+  dateOfBirth DateTime
+  image       String
+  location    String
+  onBoarding  Boolean
+  playlist    Playlist[]
+  following   User[]     @relation("UserFollowing")
+  followers   User[]     @relation("UserFollowing")
+  isArtist    Boolean
+  artistId    Int?
+  Artist      Artist?    @relation(fields: [artistId], references: [id])
 }
 
 model userProfile {

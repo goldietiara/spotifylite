@@ -23,9 +23,8 @@ const login = async (prov) => {
 </script>
 
 <template>
-  <p>{{ userSession }}</p>
   <div
-    class="py-5 md:py-10 flex-col flex gap-5 items-center w-[800px] h-full rounded-lg"
+    class="py-5 md:py-10 flex-col flex gap-5 items-center justify-center w-[800px] h-full rounded-lg"
   >
     <h1 class="text-center leading-snug text-5xl font-bold py-10">
       Log in to Spotify

@@ -11,7 +11,7 @@ const forward = () => {
 
 const logout = () => {
   client.auth.signOut();
-  return navigateTo("/");
+  return navigateTo("/login");
 };
 
 const items = [
@@ -19,7 +19,7 @@ const items = [
     {
       label: "Profile",
       click: () => {
-        console.log("shared");
+        router.push(`/user/${userSession.user_metadata.name}`);
       },
     },
     {
@@ -38,40 +38,39 @@ const items = [
 
 <template>
   <div class="flex gap-2 items-center fixed top-6 px-6 z-50">
-    <!-- <UButton
-              icon="i-majesticons-chevron-left-line"
-              size="lg"
-              square
-              :trailing="false"
-              :ui="{ rounded: 'rounded-full' }"
-            /> -->
-    <!-- <PrimeButton icon="pi pi-check" rounded aria-label="Filter" /> -->
-
-    <div
-      class="w-[40px] h-[40px] rounded-full flex items-center justify-center bg-black/50 hover:cursor-pointer hover:bg-black"
+    <UButton
       @click="back"
-    >
-      <UIcon class="text-3xl" name="i-majesticons-chevron-left-line" />
-    </div>
-    <div
-      class="w-[40px] h-[40px] rounded-full flex items-center justify-center bg-black/50 hover:cursor-pointer hover:bg-black"
+      size="md"
+      variant="solid"
+      color="black"
+      :ui="{ rounded: 'rounded-full' }"
+      icon="i-ph-caret-left"
+    />
+    <UButton
       @click="forward"
-    >
-      <UIcon class="text-3xl" name="i-majesticons-chevron-right-line" />
-    </div>
+      size="md"
+      variant="solid"
+      color="black"
+      :ui="{ rounded: 'rounded-full' }"
+      icon="i-ph-caret-right"
+    />
   </div>
   <div class="flex gap-2 items-center fixed top-6 right-0 px-6 z-50">
     <UButton
       size="md"
       variant="solid"
+      color="white"
       :ui="{ rounded: 'rounded-full' }"
       label="Explore Premium"
+      class="hover:scale-105 transition-all ease-in-out duration-150"
     />
     <UButton
       size="md"
       variant="solid"
+      color="black"
       :ui="{ rounded: 'rounded-full' }"
       icon="i-majesticons-bell-line"
+      class="hover:scale-105 transition-all ease-in-out duration-150"
     />
     <UDropdown
       :items="items"
@@ -84,7 +83,13 @@ const items = [
         },
       }"
     >
-      <UButton size="sm" variant="solid" :ui="{ rounded: 'rounded-full' }">
+      <UButton
+        size="sm"
+        variant="solid"
+        color="black"
+        :ui="{ rounded: 'rounded-full' }"
+        class="hover:scale-105 transition-all ease-in-out duration-150"
+      >
         <template #leading>
           <UAvatar :src="userSession.user_metadata.avatar_url" size="xs" />
         </template>

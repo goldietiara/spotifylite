@@ -1,114 +1,56 @@
-<script setup lang="ts">
-import { z } from "zod";
-import type { FormSubmitEvent } from "#ui/types";
-
-const userSession = useSupabaseUser();
-watchEffect(() => {
-  if (!userSession.value) {
-    navigateTo("/login");
-  }
-});
-
+<script setup>
 definePageMeta({
   layout: "login-signup",
 });
 
-const options = [
-  { label: "Indonesia", value: "Indonesia" },
-  { label: "Singapore", value: "Singapore" },
-  { label: "Malaysia", value: "Malaysia" },
-];
+const router = useRouter();
+const userSession = useSupabaseUser();
 
-const state = reactive({
-  profilePhoto: "" || userSession.value?.user_metadata.avatar_url,
-  name: "" || userSession.value?.user_metadata.name,
-  email: "" || userSession.value?.user_metadata.email,
-  location: undefined,
-});
-
-const schema = z.object({
-  profilePhoto: z.string().url().nonempty(),
-  name: z.string().email().min(5).nonempty(),
-  email: z.string().min(5).nonempty(),
-  location: z.string().refine((value) => value === "option-2", {
-    message: "Select Option 2",
-  }),
-});
-
-type Schema = z.infer<typeof schema>;
-
-const form = ref();
-
-async function onSubmit(event: FormSubmitEvent<Schema>) {
-  // Do something with event.data
-  console.log(event.data);
-}
-
-const files = ref("");
-const uploadImage = (e: any) => {
-  e.preventDefault();
-
-  const file = e.target.files?.[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onload = () => {
-    const result = reader.result as string;
-    files.value = result;
-  };
-};
-
-console.log(files.value);
+// watchEffect(() => {
+//   if (user.value) {
+//     return navigateTo("/");
+//   }
+// });
 </script>
 
 <template>
-  <UForm
-    ref="form"
-    :schema="schema"
-    :state="state"
-    class="py-5 md:py-10 flex-col flex gap-5 items-center w-[800px] h-full rounded-lg bg-gray-500/50"
-    @submit="onSubmit"
+  <div
+    class="py-5 md:py-10 mx-5 flex-col flex gap-5 items-center justify-center w-[800px] min-w-fit h-full rounded-lg"
   >
-    <UFormGroup name="profilePhoto">
-      <label for="uploadImage">
-        <UAvatar
-          v-model="state.profilePhoto"
-          alt="Profile Pict"
-          :src="files ? files : userSession?.user_metadata.avatar_url"
-          size="lg"
-          class="hover:cursor-pointer"
-        />
-      </label>
-      <Input
-        id="uploadImage"
-        accept="image/*"
-        type="file"
-        class="absolute top-0 left-0 hidden"
-        :onchange="(e:any)=>uploadImage(e)"
-      />
-    </UFormGroup>
-    <UFormGroup name="name" label="Name">
-      <UInput
-        v-model="state.name"
-        :placeholder="userSession?.user_metadata.name"
-      />
-    </UFormGroup>
-    <UFormGroup name="email" label="Email">
-      <UInput
-        v-model="state.email"
-        :placeholder="userSession?.user_metadata.email"
-      />
-    </UFormGroup>
-
-    <UFormGroup name="location" label="Location">
-      <USelect
-        v-model="state.location"
-        placeholder="Select"
-        :options="options"
-      />
-    </UFormGroup>
-
-    <UButton type="submit"> Submit </UButton>
-  </UForm>
+    <div
+      class="md:text-3xl text-sm font-bold py-10 leading-snug text-center flex flex-col items-center justify-center"
+    >
+      <h1 class="md:text-6xl text-3xl md:mb-5 mb-2">Hey there!</h1>
+      <h3>
+        It looks like you haven't created an account yet. <br />
+        Would you like to sign up?
+      </h3>
+    </div>
+    <div
+      class="md:w-[500px] w-[300px] flex-wrap flex flex-col gap-5 items-center justify-center"
+    >
+      <UButton
+        @click="router.push('/onboarding')"
+        type="submit"
+        size="xl"
+        :ui="{
+          rounded: 'rounded-full',
+        }"
+        class="py-4 w-full dark:bg-green-600 dark:text-gray-800 flex justify-center font-semibold"
+      >
+        Next
+      </UButton>
+      <UButton
+        @click="router.push('/login')"
+        type="submit"
+        size="xl"
+        :ui="{
+          rounded: 'rounded-full',
+        }"
+        class="py-4 w-full dark:bg-gray-600 hover:dark:bg-gray-700 dark:text-gray-200 flex justify-center font-semibold"
+      >
+        Back
+      </UButton>
+    </div>
+  </div>
 </template>

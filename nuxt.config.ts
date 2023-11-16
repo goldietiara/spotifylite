@@ -1,6 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  pages: true,
   modules: ["@nuxt/ui", "nuxt-primevue", "@pinia/nuxt", "@nuxtjs/supabase"],
   css: [
     "~/assets/css/main.css",
@@ -11,7 +10,7 @@ export default defineNuxtConfig({
       bucketUrl: process.env.BUCKETURL,
     },
   },
-  devtools: { enabled: false },
+  devtools: { enabled: true },
   primevue: {
     options: {
       ripple: true,

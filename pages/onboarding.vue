@@ -104,27 +104,26 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   }
 
   try {
-    const body = await useFetch(`/api/create-user`, {
-      method: "post",
+    const result = await useFetch(`/api/create-user/`, {
+      method: "POST",
       body: {
         name: event.data.name,
         email: event.data.email,
         dateOfBirth: event.data.dateOfBirth,
         image: profilePict ? profilePict : "null",
         location: event.data.location,
-        onBoarding: false,
-        isArtist: false,
       },
     });
-    return { body };
+    console.log(result);
+    return result;
     // navigateTo("/");
     // clearData()
     // isLoading.value = false
   } catch (error) {
-    console.log(error);
+    console.log(`can't upload data: ${error}`);
     // isLoading.value = false
   }
-  console.log(event.data);
+  // console.log(event.data);
 }
 </script>
 

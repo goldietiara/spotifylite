@@ -1558,7 +1558,7 @@
     defu "^6.1.2"
     pathe "^1.1.1"
 
-"@nuxtjs/tailwindcss@^6.8.1":
+"@nuxtjs/tailwindcss@^6.8.1", "@nuxtjs/tailwindcss@^6.9.4":
   version "6.9.4"
   resolved "https://registry.npmjs.org/@nuxtjs/tailwindcss/-/tailwindcss-6.9.4.tgz"
   integrity sha512-T3B3P7RgJ/WTW3plHziLWqWbMzCWctUHpjqhW1WCXB/U3FOQxGH5dG4uEOmQkA6Gj4cbTNStIU/cRxpZhbBMhg==

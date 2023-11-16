@@ -1,10 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ["@nuxt/ui", "nuxt-primevue", "@pinia/nuxt", "@nuxtjs/supabase"],
-  css: [
-    "~/assets/css/main.css",
-    "primevue/resources/themes/lara-light-teal/theme.css",
+  modules: [
+    "@nuxt/ui",
+    "nuxt-primevue",
+    "@pinia/nuxt",
+    "@nuxtjs/supabase",
+    "@nuxtjs/tailwindcss",
   ],
+  css: ["primevue/resources/themes/lara-light-teal/theme.css"],
   runtimeConfig: {
     public: {
       bucketUrl: process.env.BUCKETURL,
@@ -19,12 +22,6 @@ export default defineNuxtConfig({
     components: {
       prefix: "Prime",
       include: "*",
-    },
-  },
-  postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {},
     },
   },
   ui: {

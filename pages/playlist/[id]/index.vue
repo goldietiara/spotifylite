@@ -1,55 +1,153 @@
 <script setup>
-import { storeToRefs } from "pinia";
-import CardsPlaylistHeader from "../../../components/cards/playlist-header.vue";
-import Table from "../../../components/table.vue";
-
-const centerColor = ref("");
-
+const userSession = useSupabaseUser();
+const runtimeConfig = useRuntimeConfig();
 const route = useRoute();
-const store = useStore();
+const bgColor = ref("");
 
-const { songs } = store;
-const { currentPlaylist } = storeToRefs(store);
-const currentPlaylistId = parseInt(route.params.id);
-const data = currentPlaylist.value.find((v) => v.id === currentPlaylistId);
-const PlaylistSongs = {
-  songs: [],
-  likedSongs: data.likedSongs,
+const userStore = useUserStore();
+const { playlistById, getPlaylist, userById } = storeToRefs(userStore);
+const { getPlaylistById, getUserById } = userStore;
+const isOpen = ref(false);
+const userLikedSongs = ref([]);
+const getPlaylistSongs = ref([]);
+
+const getCurrentPlaylist = async (id) => {
+  try {
+    playlistById.value = await getPlaylistById(id);
+  } catch (error) {
+    console.log(error);
+    throw error; // Re-throw the error to propagate it to the caller
+  }
+};
+const getCurrentUser = async (userId) => {
+  try {
+    userById.value = await getUserById(userId);
+  } catch (error) {
+    console.log(error);
+    throw error; // Re-throw the error to propagate it to the caller
+  }
 };
 
-data.songsId.forEach((playlistSong) => {
-  const matchedSong = songs.find((song) => song.id === playlistSong.id);
-  if (matchedSong) {
-    PlaylistSongs.songs.push(matchedSong);
-  }
+onBeforeMount(() => {
+  getCurrentPlaylist(route.params.id);
 });
 
-const getImageColor = async () => {
+onMounted(() => {
+  watch(playlistById, () => {
+    getCurrentUser(playlistById.value.id);
+    getImageColor(getPlaylist.value?.image);
+    console.log(userById.value);
+    console.log(getPlaylist.value);
+  });
+});
+
+const getImageColor = async (image) => {
   try {
-    const color = await getColorFromImage(data.img);
-    centerColor.value = color;
+    const color = await getColorFromImage(image);
+    bgColor.value = color;
+    console.log(bgColor.value);
   } catch (error) {
     console.error(error.message);
   }
 };
 
-onMounted(getImageColor);
+const q = ref("");
+
+const searchIcon = ref(false);
+
+const filteredRows = computed(() => {
+  if (!q.value) {
+    return getPlaylistSongs.value;
+  }
+  return getPlaylistSongs.value.filter((person) => {
+    return Object.values(person).some((value) => {
+      return String(value).toLowerCase().includes(q.value.toLowerCase());
+    });
+  });
+});
+
+// const isUser = computed(() => {
+//   userById.value.email === userSession.value.user_metadata.email;
+//   if (isUser) {
+//     console.log(isUser);
+//     return true;
+//   }
+// });
+
+const likedSongs = (id) => {
+  const result = userLikedSongs.value.find((v) => v.id === id);
+  if (result) {
+    return true;
+  }
+};
 </script>
 
 <template>
-  <main
-    class="w-full h-full bg-gradient-to-t from-zinc-900 to-transparent pt-24"
-    :style="{ backgroundColor: centerColor }"
-  >
-    <section class="py-4 px-6 flex flex-col gap-5">
-      <CardsPlaylistHeader :data="data" class="mt-5" />
-    </section>
+  <main class="relative w-full h-full overflow-y-auto">
+    <div
+      class="h-screen w-full absolute top-0 z-0"
+      :style="{
+        background: `linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 10%, ${bgColor} 100%)`,
+      }"
+    ></div>
 
-    <section
-      class="mt-5 px-5 w-full h-fit bg-gradient-to-br from-zinc-900/20 via-zinc-900/40 to-zinc-900/70"
-    >
-      <Table :PlaylistSongs="PlaylistSongs" />
+    <section class="z-20 pt-20">
+      <CardsPlaylistProfileHeader :type="'playlist'" :data="getPlaylist" />
+
+      <div class="mt-10 relative">
+        <div class="w-full h-[500px] bg-zinc-900/20 absolute top-0 z-0"></div>
+        <div class="py-3 px-6 flex flex-col gap-5">
+          <div class="flex px-3 py-3.5 pt-5 justify-between items-center">
+            <PlayerDetailFollow
+              :type="'playlist'"
+              @open-modal="isOpen = true"
+            />
+
+            <div
+              class="mr-0 h-[32px] w-[32px] rounded-full flex justify-center items-center hover:bg-white/10 hover:cursor-pointer transition-all duration-300"
+              @click="searchIcon = !searchIcon"
+              v-if="!searchIcon"
+            >
+              <UIcon
+                name="i-ph-magnifying-glass"
+                class="bg-gray-400 flex-shrink-0 h-5 w-5"
+              />
+            </div>
+
+            <UInput
+              v-else
+              v-model="q"
+              placeholder="Search in Playlist"
+              icon="i-ph-magnifying-glass"
+              color="gray"
+              variant="outline"
+              :trailing="false"
+              :sort="{ column: 'title' }"
+              :ui="{
+                wrapper: 'relative',
+                icon: {
+                  base: 'flex-shrink-0 text-gray-400 dark:text-gray-400',
+                },
+              }"
+            />
+          </div>
+          <UModal v-model="isOpen">
+            <FormPlaylistUserUpdate
+              :type="'playlist'"
+              :data="getPlaylist"
+              :runtimeConfig="runtimeConfig"
+              :onCloseModal="() => (isOpen = onCloseModal)"
+            />
+          </UModal>
+
+          <Table
+            :filteredRows="filteredRows"
+            :likedSongs="likedSongs"
+            :data="userById"
+          />
+        </div>
+      </div>
+      <Footer></Footer>
     </section>
-    <Footer></Footer>
   </main>
 </template>

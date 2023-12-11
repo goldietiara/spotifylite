@@ -4,7 +4,7 @@ const router = useRouter();
 
 <template>
   <div
-    class="flex items-center gap-2 mx-10 my-5 md:justify-start justify-center"
+    class="flex items-center gap-2 px-10 my-5 md:justify-start justify-center"
     @click="router.push('/')"
   >
     <UIcon name="i-ph-spotify-logo-fill" class="text-4xl" />
@@ -14,4 +14,6 @@ const router = useRouter();
   <div class="h-fit w-full flex justify-center mt-10">
     <slot></slot>
   </div>
+
+  <Footer />
 </template>

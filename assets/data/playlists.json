@@ -2,22 +2,25 @@
   {
     "id": 11,
     "userId": 1,
-    "playlistName": "My Sweet Joy",
-    "img": "/playlist1.jpeg",
+    "user": "owy",
+    "name": "My Sweet Joy",
+    "image": "/playlist1.jpeg",
     "songs": [{ "id": 1 }, { "id": 2 }, { "id": 3 }, { "id": 4 }, { "id": 5 }]
   },
   {
     "id": 12,
     "userId": 1,
-    "playlistName": "Seasons in the Sun",
-    "img": "/playlist2.jpeg",
+    "user": "owy",
+    "name": "Seasons in the Sun",
+    "image": "/playlist2.jpeg",
     "songs": [{ "id": 6 }, { "id": 7 }, { "id": 8 }, { "id": 9 }, { "id": 10 }]
   },
   {
     "id": 13,
     "userId": 1,
-    "playlistName": "Get your Protein",
-    "img": "/playlist3.jpeg",
+    "user": "owy",
+    "name": "Get your Protein",
+    "image": "/playlist3.jpeg",
     "songs": [
       { "id": 11 },
       { "id": 12 },
@@ -29,8 +32,9 @@
   {
     "id": 21,
     "userId": 2,
-    "playlistName": "Safe Ride",
-    "img": "https://i.pinimg.com/564x/b3/be/28/b3be288b52e950fd7ab96e09c8c25f12.jpg",
+    "user": "ry",
+    "name": "Safe Ride",
+    "image": "https://i.pinimg.com/564x/b3/be/28/b3be288b52e950fd7ab96e09c8c25f12.jpg",
     "songs": [
       { "id": 16 },
       { "id": 17 },
@@ -42,15 +46,17 @@
   {
     "id": 22,
     "userId": 2,
-    "playlistName": "Fear of Water",
-    "img": "https://i.pinimg.com/564x/4a/eb/9b/4aeb9b8a83269382e57b43e95c2f09f8.jpg",
+    "user": "ry",
+    "name": "Fear of Water",
+    "image": "https://i.pinimg.com/564x/4a/eb/9b/4aeb9b8a83269382e57b43e95c2f09f8.jpg",
     "songs": [{ "id": 6 }, { "id": 7 }, { "id": 8 }, { "id": 9 }, { "id": 10 }]
   },
   {
     "id": 23,
     "userId": 2,
-    "playlistName": "Memories",
-    "img": "https://i.pinimg.com/564x/b3/16/f0/b316f0192747a4b6356f78cdcc879213.jpg",
+    "user": "ry",
+    "name": "Memories",
+    "image": "https://i.pinimg.com/564x/b3/16/f0/b316f0192747a4b6356f78cdcc879213.jpg",
     "songs": [{ "id": 2 }, { "id": 5 }, { "id": 3 }, { "id": 10 }, { "id": 12 }]
   }
 ]

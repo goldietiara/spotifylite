@@ -1,6 +1,30 @@
 <script setup>
+const client = useSupabaseClient();
+const userSession = useSupabaseUser();
 const router = useRouter();
-const { userSession, client } = defineProps(["userSession", "client"]);
+const userStore = useUserStore();
+const { userByEmail } = storeToRefs(userStore);
+const { getUserByEmail } = userStore;
+const currentUser = ref({});
+
+const getCurrentUser = async (email) => {
+  try {
+    userByEmail.value = await getUserByEmail(email);
+  } catch (error) {
+    console.log(error);
+    throw error; // Re-throw the error to propagate it to the caller
+  }
+};
+
+onBeforeMount(() => {
+  getCurrentUser(userSession.value.user_metadata.email);
+});
+
+onMounted(() => {
+  watch(userByEmail, () => {
+    currentUser.value = userByEmail.value;
+  });
+});
 
 const back = () => {
   router.go(-1);
@@ -19,7 +43,7 @@ const items = [
     {
       label: "Profile",
       click: () => {
-        router.push(`/user/${userSession.user_metadata.name}`);
+        router.push(`/user/${currentUser.value.id}`);
       },
     },
     {
@@ -90,9 +114,17 @@ const items = [
         :ui="{ rounded: 'rounded-full' }"
         class="hover:scale-105 transition-all ease-in-out duration-150"
       >
-        <template #leading>
-          <UAvatar :src="userSession.user_metadata.avatar_url" size="xs" />
-        </template>
+        <!-- <template #leading>
+          <UAvatar
+            :src="currentUser.image"
+            size="xs"
+            :alt="currentUser.name"
+            :ui="{
+              background: 'bg-transparent dark:bg-transparent',
+              text: 'text-gray-200 dark:text-gray-200',
+            }"
+          />
+        </template> -->
       </UButton>
     </UDropdown>
   </div>

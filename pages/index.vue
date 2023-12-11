@@ -1,10 +1,9 @@
 <script setup>
-const client = useSupabaseClient();
 const userSession = useSupabaseUser();
 
 watchEffect(() => {
   if (!userSession.value) {
-    return navigateTo("/auth");
+    return navigateTo("/login");
   }
 });
 </script>
@@ -21,6 +20,8 @@ watchEffect(() => {
       <p>name: {{ userSession.user_metadata.name }}</p>
       <p>email: {{ userSession.email }}</p>
     </div>
+
+    <div class="flex"></div>
 
     <p class="mt-10 mx-3 text-gray-400">
       {{ userSession }}

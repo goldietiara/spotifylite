@@ -15,8 +15,8 @@ export const useStore = defineStore("store1", {
           userId: playlist.userId,
           user: user?.name || "not found",
           likedSongs: user?.likedSongs,
-          playlistName: playlist.playlistName,
-          img: playlist.img,
+          name: playlist.name,
+          image: playlist.image,
         };
       });
 
@@ -30,9 +30,9 @@ export const useStore = defineStore("store1", {
           userId: playlist.userId,
           user: user?.name || "not found",
           userProfile: user?.profilePicture,
-          playlistName: playlist.playlistName,
+          name: playlist.name,
           likedSongs: user?.likedSongs,
-          img: playlist.img,
+          image: playlist.image,
           songsId: playlist.songs,
         };
       });

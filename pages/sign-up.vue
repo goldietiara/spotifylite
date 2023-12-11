@@ -4,7 +4,6 @@ definePageMeta({
 });
 
 const router = useRouter();
-const userSession = useSupabaseUser();
 
 // watchEffect(() => {
 //   if (user.value) {

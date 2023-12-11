@@ -6,6 +6,7 @@ export default defineAppConfig({
     button: {
       color: {
         black: {
+          ghost: "hover:text-white",
           solid:
             " shadow-sm text-white dark:text-gray-200 bg-black/70 hover:bg-black disabled:text-gray-400 dark:bg-black/70 dark:hover:bg-black dark:disabled:text-gray-400 disabled:text-gray-400 dark:disabled:bg-black/50 disabled:bg-black/50 focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400",
         },
@@ -48,6 +49,20 @@ export default defineAppConfig({
           outline:
             "shadow-sm bg-transparent dark:bg-transparent text-gray-200 dark:text-gray-200 ring-1 ring-inset ring-gray-400 dark:ring-gray-400 focus:ring-primary-500 dark:focus:ring-primary-400",
         },
+        gray: {
+          outline:
+            "shadow-sm bg-white/10 dark:bg-white/10 text-white dark:text-gray-400 placeholder-white dark:placeholder-gray-400 ring-0 ring-inset ring-transparent dark:ring-transparent focus:ring-0 focus:ring-transparent dark:focus:ring-transparent",
+        },
+      },
+    },
+    textarea: {
+      rounded: "rounded-sm",
+
+      color: {
+        gray: {
+          outline:
+            "shadow-sm bg-white/10 dark:bg-white/10 text-white dark:text-gray-400 placeholder-white dark:placeholder-gray-400 ring-0 ring-inset ring-transparent dark:ring-transparent focus:ring-0 focus:ring-transparent dark:focus:ring-transparent",
+        },
       },
     },
     select: {
@@ -70,6 +85,10 @@ export default defineAppConfig({
       size: {
         xl: "h-[100px] w-[100px] text-3xl",
       },
+    },
+    modal: {
+      background: "bg-zinc-800 dark:bg-zinc-800",
+      overlay: { background: "bg-black/50 dark:bg-black/50" },
     },
   },
 });

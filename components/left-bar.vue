@@ -1,51 +1,87 @@
 <script setup>
 import PlaylistSongCard from "./cards/playlist-songs-card.vue";
+import playlist from "../assets/data/playlists.json";
 
 const route = useRoute();
 const router = useRouter();
 const search = ref("");
 const width = ref(false);
+const runtimeConfig = useRuntimeConfig();
+const userSession = useSupabaseUser();
+const userStore = useUserStore();
+const { userByEmail } = storeToRefs(userStore);
+const { getUserByEmail } = userStore;
+
+const getCurrentUser = async (email) => {
+  try {
+    userByEmail.value = await getUserByEmail(email);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+onBeforeMount(() => {
+  getCurrentUser(userSession.value?.user_metadata.email);
+});
+
 function currentPage(currentPath) {
   if (route.path === currentPath) {
     return "text-white/90";
   } else return "text-white/40";
 }
 
-const playlist = [
-  {
-    id: 11,
-    userId: 1,
-    playlistName: "My Sweet Joy",
-    img: "/playlist1.jpeg",
-    user: "owy",
-  },
-  {
-    id: 12,
-    userId: 1,
-    playlistName: "Seasons in the Sun",
-    img: "/playlist2.jpeg",
-    user: "ry",
-  },
-  {
-    id: 13,
-    userId: 1,
-    playlistName: "Get your Protein",
-    img: "/playlist3.jpeg",
-    user: "owy",
-  },
-];
-
 const data = ref(playlist);
 
 watch(search, () => {
   data.value = playlist.filter((v) =>
-    v.playlistName.toLowerCase().includes(search.value.toLowerCase())
+    v.name.toLowerCase().includes(search.value.toLowerCase())
   );
 });
 
-const push = (id) => {
-  router.push(`/playlist/${id}`);
-};
+const state = reactive({
+  id: 1,
+  name: `New Playlist #${
+    userByEmail.value.playlist && userByEmail.value.playlist.length + 1
+  }`,
+  description: "New Playlist Description",
+  image: `${runtimeConfig.public.bucketUrl}playlist-${
+    userByEmail.value.email
+  }-${userByEmail.value.playlist && userByEmail.value.playlist.length + 1}.jpg`,
+  imageName: `playlist-${userByEmail.value.email}-${
+    userByEmail.value.playlist && userByEmail.value.playlist.length + 1
+  }.jpg`,
+});
+
+watchEffect(() => {
+  console.log(state);
+});
+
+async function createPlaylist(data) {
+  try {
+    const result = await useFetch(`/api/create-playlist/`, {
+      method: "POST",
+      body: {
+        userId: data.id,
+        name: data.name,
+        description: data.description,
+        image: data.image,
+        imageName: data.imageName,
+      },
+    });
+
+    await useFetch(`/api/update-add-user-playlist/${data.id}`, {
+      method: "PATCH",
+      body: {
+        playlist: result.data.value?.id,
+      },
+    });
+
+    return result;
+  } catch (error) {
+    console.log(`something went wrong: ${error}`);
+  }
+}
 </script>
 
 <template>
@@ -101,19 +137,31 @@ const push = (id) => {
       class="flex flex-col bg-zinc-900 w-full h-full py-2 px-3 rounded-lg overflow-hidden"
     >
       <div
-        class="py-2 px-3 flex gap-4 font-semibold items-center text-white/40 hover:text-white/90 ease-in-out transition-all duration-300 hover:cursor-pointer"
-        @click="width = !width"
-        :class="width && 'justify-center'"
+        class="py-2 px-3 w-full flex font-semibold items-center text-white/40 ease-in-out transition-all duration-300"
+        :class="width ? 'justify-center' : 'justify-between'"
       >
-        <UIcon class="text-3xl shrink-0" name="i-majesticons-folder" />
-        <span v-show="!width"> Your Library </span>
+        <div
+          class="flex items-center gap-4 hover:text-white/90 cursor-pointer"
+          @click="width = !width"
+        >
+          <UIcon class="text-3xl shrink-0" name="i-ph-cardholder" />
+          <span v-show="!width"> Your Library </span>
+        </div>
+        <UTooltip text="Create playlist">
+          <UIcon
+            v-show="width === false"
+            class="text-2xl shrink-0 hover:text-white/90 cursor-pointer"
+            name="i-ph-plus"
+            @click="createPlaylist(state)"
+          />
+        </UTooltip>
       </div>
 
       <div
         class="mt-3 mx-3 mb-2 px-2 flex items-center gap-1 bg-zinc-100/5 rounded-sm text-2xl text-white/70"
         v-show="!width"
       >
-        <UIcon name="i-majesticons-search-line" />
+        <UIcon name="i-ph-magnifying-glass" />
 
         <input
           type="text"
@@ -151,10 +199,11 @@ const push = (id) => {
           </div>
         </div>
         <PlaylistSongCard
-          v-for="v in data"
-          :key="v.id"
-          :v="v"
-          @click="push(v.id)"
+          :type="'playlist'"
+          v-for="(data, index) in userByEmail.playlist"
+          :key="index"
+          :data="data"
+          :owner="userByEmail.name"
         />
       </div>
 

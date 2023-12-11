@@ -10,7 +10,7 @@ export default defineNuxtConfig({
   css: ["primevue/resources/themes/lara-light-teal/theme.css"],
   runtimeConfig: {
     public: {
-      bucketUrl: process.env.BUCKETURL,
+      bucketUrl: process.env.BUCKET_URL,
     },
   },
   devtools: { enabled: true },

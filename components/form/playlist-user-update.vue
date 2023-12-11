@@ -1,0 +1,196 @@
+<script setup lang="ts">
+import { z } from "zod";
+import type { FormSubmitEvent } from "#ui/types";
+
+const client = useSupabaseClient();
+const { data, type, runtimeConfig } = defineProps([
+  "data",
+  "type",
+  "runtimeConfig",
+]);
+
+const state = reactive({
+  name: data.name,
+  email: data.email || "isEmpty@gmail.com",
+  image: data?.image || "is empty",
+  imageName: data.imageName || "is empty",
+  description: data?.description || "",
+});
+watchEffect(() => console.log(data));
+
+const schema = z.object({
+  name: z
+    .string()
+    .min(3, { message: "name must be at least 3 character" })
+    .nonempty(),
+  email: z.string().email(),
+  image: z.string().url(),
+  imageName: z.string(),
+  description: z.nullable(z.string()),
+});
+const files = ref("");
+
+const uploadImage = (e: any) => {
+  e.preventDefault();
+
+  const file = e.target.files?.[0];
+  if (!file) return;
+  files.value = file;
+
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = () => {
+    const result = reader.result as string;
+    state.image = result;
+  };
+};
+
+type Schema = z.infer<typeof schema>;
+
+const form = ref();
+const emit = defineEmits(["closeModal"]);
+
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+  let newImage = null;
+
+  if (files.value) {
+    const { data, error } = await client.storage
+      .from("spotifylite-files")
+      .upload(`${event.data.imageName}`, files.value, {
+        contentType: "image/jpeg",
+        upsert: true,
+      });
+    if (error) {
+      console.log(error);
+    } else {
+      newImage = data.path;
+    }
+  }
+  if (type === "playlist") {
+    try {
+      await useFetch(`/api/update-playlist/${data.id}`, {
+        method: "patch",
+        body: {
+          name: event.data.name,
+          image: event.data.image,
+          imageName: event.data.imageName,
+          description: event.data.description,
+        },
+      });
+      // return result;
+      // isLoading.value = false
+      emit("closeModal", false);
+    } catch (error) {
+      console.log(`error updating user: ${error}`);
+      // isLoading.value = false
+    }
+  }
+
+  if (type === "user") {
+    try {
+      await useFetch(`/api/update-user/${data.id}`, {
+        method: "patch",
+        body: {
+          name: event.data.name,
+          image: event.data.image,
+          imageName: event.data.imageName,
+        },
+      });
+      // return result;
+      // isLoading.value = false
+      emit("closeModal", false);
+    } catch (error) {
+      console.log(`error updating user: ${error}`);
+      // isLoading.value = false
+    }
+  }
+}
+</script>
+
+<template>
+  <div class="p-5 flex flex-col gap-5">
+    <h1 class="text-xl font-bold">
+      {{ type.charAt(0).toUpperCase() + type.slice(1) }} details
+    </h1>
+    <UForm
+      ref="form"
+      :schema="schema"
+      :state="state"
+      @submit="onSubmit"
+      class="flex gap-5 h-full w-full"
+    >
+      <UFormGroup
+        name="image"
+        class="group flex w-fit h-fit justify-center relative"
+      >
+        <label for="uploadImage" class="w-fit h-fit">
+          <div
+            class="absolute z-20 hidden group-hover:flex flex-col gap-2 bg-black/20 transition-all duration-150 ease-in-out w-full h-full justify-center items-center hover:cursor-pointer"
+            :class="type === 'user' ? 'rounded-full' : 'rounded-none'"
+          >
+            <UIcon class="text-6xl" name="i-ph-pencil" />
+            <p>Choose Photo</p>
+          </div>
+
+          <div
+            :style="{
+              backgroundImage: `url(${state.image ? state.image : data.image})`,
+            }"
+            alt="playlist/user-image"
+            class="min-w-[192px] h-[192px] shadow-zinc-900 shadow-2xl drop-shadow-2xl bg-cover bg-center flex justify-center items-center"
+            :class="type === 'user' ? 'rounded-full' : 'rounded-none'"
+          >
+            <UIcon
+              v-show="state.image.length < 1"
+              class="opacity-30 text-8xl"
+              name="i-ph-music-notes"
+            />
+          </div>
+        </label>
+        <Input
+          id="uploadImage"
+          accept="image/*"
+          type="file"
+          class="hidden"
+          v-model="state.image"
+          :onchange="(e:any)=>uploadImage(e)"
+        />
+      </UFormGroup>
+
+      <div class="flex flex-col gap-5 h-full w-full self-center">
+        <UFormGroup name="name">
+          <UInput
+            size="xl"
+            :placeholder="data.name"
+            color="gray"
+            variant="outline"
+            v-model="state.name"
+          />
+        </UFormGroup>
+
+        <UFormGroup name="description">
+          <UTextarea
+            v-show="type !== 'user'"
+            color="gray"
+            variant="outline"
+            size="xl"
+            :rows="4"
+            v-model="state.description"
+          />
+        </UFormGroup>
+
+        <UButton
+          label="Save"
+          color="white"
+          type="submit"
+          :ui="{ rounded: 'rounded-full' }"
+          class="px-7 py-4 self-end hover:scale-110 transition-all ease-out duration-100"
+        />
+      </div>
+    </UForm>
+    <p class="text-xs z-30">
+      By proceeding, you agree to give Spotify access to the image you choose to
+      upload. Please make sure you have the right to upload the image.
+    </p>
+  </div>
+</template>

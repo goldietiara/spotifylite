@@ -11,34 +11,40 @@ datasource db {
 }
 
 model User {
-  id          Int        @id @default(autoincrement())
-  name        String
-  email       String     @unique
-  dateOfBirth String
-  image       String
-  location    String
-  onBoarding  Boolean
-  playlist    Playlist[]
-  following   User[]     @relation("UserFollowing")
-  followers   User[]     @relation("UserFollowing")
-  isArtist    Boolean
-  artistId    Int?
-  Artist      Artist?    @relation(fields: [artistId], references: [id])
+  id            Int          @id @default(autoincrement())
+  name          String
+  email         String       @unique
+  dateOfBirth   String
+  image         String
+  imageName     String
+  location      String
+  onBoarding    Boolean
+  playlist      Playlist[]
+  following     User[]       @relation("UserFollows")
+  followers     User[]       @relation("UserFollows")
+  userProfileId Int?
+  userProfile   userProfile?
+  isArtist      Boolean      @default(false)
+  artistId      Int?         @unique
 }
 
 model userProfile {
   id            Int        @id @default(autoincrement())
-  userId        String     @db.Uuid
   likedSongs    Song[]
   likedPlaylist Playlist[]
+  userId        Int        @unique
+  User          User       @relation(fields: [userId], references: [id])
+  Artist        Artist?    @relation(fields: [artistId], references: [id])
+  artistId      Int?
 }
 
 model Playlist {
   id            Int          @id @default(autoincrement())
-  userId        String       @db.Uuid
+  userId        Int          @unique
   name          String
   description   String
   image         String
+  imageName     String
   createdAt     DateTime     @default(now())
   songs         Song[]
   likes         User[]
@@ -47,18 +53,21 @@ model Playlist {
 }
 
 model Artist {
-  id        Int     @id @default(autoincrement())
-  userId    String  @db.Uuid
-  name      String
-  image     String
-  header    String
-  followers User[]
-  album     Album[]
+  id         Int           @id @default(autoincrement())
+  email      String        @unique
+  name       String
+  image      String
+  imageName  String
+  header     String
+  headerName String
+  album      Album[]
+  followers  userProfile[]
+  userId     Int           @unique
 }
 
 model Song {
   id            Int          @id @default(autoincrement())
-  artistId      String       @db.Uuid
+  artistId      Int
   name          String
   playlistId    Int?
   Playlist      Playlist?    @relation(fields: [playlistId], references: [id])
@@ -72,6 +81,7 @@ model Album {
   id        Int      @id @default(autoincrement())
   name      String
   image     String
+  imageName String
   genre     String
   createdAt DateTime @default(now())
   songs     Song[]

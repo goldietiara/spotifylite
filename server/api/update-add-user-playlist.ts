@@ -2,16 +2,13 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
-  // const body = await readBody(event);
+  const body = await readBody(event);
 
   const result = await prisma.user.update({
-    where: { id: parseInt(id as string) },
+    where: { id: parseInt(body.id) },
     data: {
-      isArtist: true,
-      // artistId: body.artistId,
+      playlist: { connect: { id: parseInt(body.playlist) } },
     },
   });
-
   return result;
 });

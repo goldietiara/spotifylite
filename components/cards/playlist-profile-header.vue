@@ -12,6 +12,7 @@ const go = (id) => {
     class="flex flex-wrap justify-start items-end gap-7 h-[250px] w-full text-white px-6 z-10"
   >
     <div
+      v-if="data.image"
       :style="{
         backgroundImage: `url(${data.image})`,
       }"
@@ -25,6 +26,11 @@ const go = (id) => {
         name="i-ph-music-notes"
       />
     </div>
+    <USkeleton
+      v-else
+      class="w-[250px] h-[250px] shadow-zinc-900 shadow-2xl drop-shadow-2xl z-10"
+      :class="type === 'user' ? 'rounded-full' : 'rounded-none'"
+    />
     <div class="flex flex-col gap-5 text-sm font-light z-20 self-end">
       <p>
         {{
@@ -35,33 +41,50 @@ const go = (id) => {
             : "Album"
         }}
       </p>
-      <h1 class="text-6xl font-bold">
+      <h1 v-if="data.name" class="text-6xl font-bold">
         {{ data.name }}
       </h1>
-      <p class="text-gray-200" v-show="type === 'playlist'">
-        {{ data.description }}
-      </p>
+      <USkeleton v-else class="h-[50px] w-[200px]" />
+      <div v-show="type === 'playlist'">
+        <p v-if="data.description" class="text-gray-200">
+          {{ data.description }}
+        </p>
+        <USkeleton v-else class="w-[150px] h-[30px]" />
+      </div>
+
       <div class="flex items-center gap-1">
-        <div
-          :style="{
-            backgroundImage: `url(${
-              type === 'playlist' ? data.userImage : data.artistImage
-            })`,
-          }"
-          v-show="type !== 'user'"
-          alt="user-profile"
-          class="rounded-full w-[30px] h-[30px] bg-cover bg-center"
-        />
+        <div v-show="type !== 'user'">
+          <div
+            v-if="type === 'playlist' ? data.userImage : data.artistImage"
+            :style="{
+              backgroundImage: `url(${
+                type === 'playlist' ? data.userImage : data.artistImage
+              })`,
+            }"
+            alt="user-profile"
+            class="rounded-full w-[30px] h-[30px] bg-cover bg-center"
+          />
+          <USkeleton v-else class="rounded-full w-[30px] h-[30px]" />
+        </div>
 
         <p
+          v-if="type === 'playlist' ? data.id : data.artistId"
           :class="
             type !== 'user' &&
             'font-semibold hover:underline hover:underline-offset-4 hover:cursor-pointer'
           "
           @click="go(type === 'playlist' ? data.id : data.artistId)"
         >
-          {{ type === "playlist" ? data.user : data.artist }}
+          {{
+            type === "playlist"
+              ? data.user
+              : type === "artist"
+              ? data.artist
+              : `Public Playlist ${data.playlist.length}`
+          }}
         </p>
+        <USkeleton v-else class="w-[50px] h-[20px]" />
+
         <UIcon v-show="type !== 'artist'" name="i-ph-dot-outline-fill" />
         <a
           v-show="type !== 'artist'"
@@ -73,6 +96,7 @@ const go = (id) => {
         >
         <UIcon name="i-ph-dot-outline-fill" />
         <p
+          v-if="type === 'user'"
           :class="
             type === 'user' &&
             ' hover:underline hover:underline-offset-4 hover:cursor-pointer'
@@ -80,6 +104,7 @@ const go = (id) => {
         >
           {{ type === "user" ? `50 Following` : `${data.songs} songs` }}
         </p>
+        <USkeleton v-else class="w-[50px] h-[20px]" />
       </div>
     </div>
   </div>

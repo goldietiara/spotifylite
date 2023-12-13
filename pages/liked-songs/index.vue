@@ -2,33 +2,10 @@
 import Table from "../../../components/table.vue";
 
 const router = useRouter();
-const userSession = useSupabaseUser();
-const userStore = useUserStore();
-const { userByEmail, getUserLikes, getUserLikesPlaylist } =
-  storeToRefs(userStore);
-const { getUserByEmail } = userStore;
-
-const isOpen = ref(false);
-
-const getCurrentPlaylist = async (email) => {
-  try {
-    userByEmail.value = await getUserByEmail(email);
-  } catch (error) {
-    console.log(error);
-    throw error; // Re-throw the error to propagate it to the caller
-  }
-};
-
-onBeforeMount(() => {
-  getCurrentPlaylist(userSession.value.user_metadata.email);
-});
-
-onMounted(() => {
-  watch(userByEmail, () => {
-    getUserLikes.value;
-    console.log(userByEmail.value);
-  });
-});
+const authStore = useAuthStore();
+const { currentUser } = storeToRefs(authStore);
+// const { userByEmail, getUserLikes, getUserLikesPlaylist } =
+//   storeToRefs(userStore);
 
 const q = ref("");
 
@@ -83,28 +60,16 @@ const go = (id) => {
               :style="{
                 backgroundImage: `url(${userByEmail.image})`,
               }"
-              v-show="type !== 'user'"
               alt="user-profile"
               class="rounded-full w-[30px] h-[30px] bg-cover bg-center"
             />
 
-            <p
-              :class="
-                type !== 'user' &&
-                'font-semibold hover:underline hover:underline-offset-4 hover:cursor-pointer'
-              "
-              @click="go(userByEmail.id)"
-            >
+            <p @click="go(userByEmail.id)">
               {{ userByEmail.name }}
             </p>
 
             <UIcon name="i-ph-dot-outline-fill" />
-            <p
-              :class="
-                type === 'user' &&
-                ' hover:underline hover:underline-offset-4 hover:cursor-pointer'
-              "
-            >
+            <p>
               {{ `${getUserLikesPlaylist.length} songs` }}
             </p>
           </div>
@@ -112,14 +77,13 @@ const go = (id) => {
       </div>
 
       <!-- SONG LISTSS -->
+      <div>TABLE</div>
+
       <div class="mt-10 relative">
         <div class="w-full h-[500px] bg-zinc-900/20 absolute top-0 z-0"></div>
         <div class="py-3 px-6 flex flex-col gap-5">
           <div class="flex px-3 py-3.5 pt-5 justify-between items-center">
-            <PlayerDetailFollow
-              :type="'liked playlist'"
-              @open-modal="isOpen = true"
-            />
+            <PlayerDetailFollow :type="'liked playlist'" />
 
             <div
               class="mr-0 h-[32px] w-[32px] rounded-full flex justify-center items-center hover:bg-white/10 hover:cursor-pointer transition-all duration-300"
@@ -149,13 +113,6 @@ const go = (id) => {
               }"
             />
           </div>
-          <UModal v-model="isOpen">
-            <FormPlaylistUserUpdate
-              :data="data"
-              :type="'playlist'"
-              :onCloseModal="() => (isOpen = onCloseModal)"
-            />
-          </UModal>
 
           <Table
             :type="'playlist'"
@@ -168,4 +125,5 @@ const go = (id) => {
       <Footer></Footer>
     </section>
   </main>
+  wawa
 </template>

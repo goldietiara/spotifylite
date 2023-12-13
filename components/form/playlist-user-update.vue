@@ -8,6 +8,7 @@ const { data, type, runtimeConfig } = defineProps([
   "type",
   "runtimeConfig",
 ]);
+const load = ref(false);
 
 const state = reactive({
   name: data.name,
@@ -52,6 +53,7 @@ const emit = defineEmits(["closeModal"]);
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   let newImage = null;
+  load.value = true;
 
   if (files.value) {
     const { data, error } = await client.storage
@@ -77,12 +79,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           description: event.data.description,
         },
       });
-      // return result;
-      // isLoading.value = false
+      load.value = false;
       emit("closeModal", false);
     } catch (error) {
       console.log(`error updating user: ${error}`);
-      // isLoading.value = false
+      load.value = false;
     }
   }
 
@@ -96,12 +97,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           imageName: event.data.imageName,
         },
       });
-      // return result;
-      // isLoading.value = false
+      load.value = false;
       emit("closeModal", false);
     } catch (error) {
       console.log(`error updating user: ${error}`);
-      // isLoading.value = false
+      load.value = false;
     }
   }
 }
@@ -184,8 +184,15 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           color="white"
           type="submit"
           :ui="{ rounded: 'rounded-full' }"
-          class="px-7 py-4 self-end hover:scale-110 transition-all ease-out duration-100"
-        />
+          class="px-7 py-4 self-end hover:scale-110 transition-all ease-out duration-100 flex justify-center items-center w-[80px]"
+        >
+          <p>Save</p>
+          <UIcon
+            v-show="load === true"
+            class="bg-green-500 animate-spin text-xl"
+            name="i-ph-circle-notch-bold"
+          />
+        </UButton>
       </div>
     </UForm>
     <p class="text-xs z-30">

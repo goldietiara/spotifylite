@@ -6,39 +6,28 @@ const bgColor = ref("");
 
 const userStore = useUserStore();
 const { playlistById, getPlaylist, userById } = storeToRefs(userStore);
-const { getPlaylistById, getUserById } = userStore;
+const { getPlaylistById } = userStore;
 const isOpen = ref(false);
 const userLikedSongs = ref([]);
 const getPlaylistSongs = ref([]);
 
-const getCurrentPlaylist = async (id) => {
+const getCurrentPlaylist = async () => {
   try {
-    playlistById.value = await getPlaylistById(id);
-  } catch (error) {
-    console.log(error);
-    throw error; // Re-throw the error to propagate it to the caller
-  }
-};
-const getCurrentUser = async (userId) => {
-  try {
-    userById.value = await getUserById(userId);
+    await getPlaylistById(route.params.id);
   } catch (error) {
     console.log(error);
     throw error; // Re-throw the error to propagate it to the caller
   }
 };
 
-onBeforeMount(() => {
-  getCurrentPlaylist(route.params.id);
+watchEffect(async () => {
+  await getCurrentPlaylist();
 });
 
-onMounted(() => {
-  watch(playlistById, () => {
-    getCurrentUser(playlistById.value.id);
-    getImageColor(getPlaylist.value?.image);
-    console.log(userById.value);
-    console.log(getPlaylist.value);
-  });
+watch(playlistById, async () => {
+  getImageColor(getPlaylist.value.image);
+  console.log(getPlaylist.value);
+  console.log(playlistById.value);
 });
 
 const getImageColor = async (image) => {
@@ -84,17 +73,17 @@ const likedSongs = (id) => {
 
 <template>
   <main class="relative w-full h-full overflow-y-auto">
-    <div
+    <!-- <div
       class="h-screen w-full absolute top-0 z-0"
       :style="{
         background: `linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 10%, ${bgColor} 100%)`,
       }"
-    ></div>
+    ></div> -->
 
     <section class="z-20 pt-20">
       <CardsPlaylistProfileHeader :type="'playlist'" :data="getPlaylist" />
 
-      <div class="mt-10 relative">
+      <!-- <div class="mt-10 relative">
         <div class="w-full h-[500px] bg-zinc-900/20 absolute top-0 z-0"></div>
         <div class="py-3 px-6 flex flex-col gap-5">
           <div class="flex px-3 py-3.5 pt-5 justify-between items-center">
@@ -146,7 +135,7 @@ const likedSongs = (id) => {
             :data="userById"
           />
         </div>
-      </div>
+      </div> -->
       <Footer></Footer>
     </section>
   </main>

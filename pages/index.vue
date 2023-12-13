@@ -1,10 +1,37 @@
 <script setup>
+import { onBeforeMount } from "vue";
+
 const userSession = useSupabaseUser();
+const authStore = useAuthStore();
+
+const { getCurrentUser } = authStore;
+const { currentUser } = storeToRefs(authStore);
+
+definePageMeta({
+  title: "Spotify - Web Player by Goldie",
+});
 
 watchEffect(() => {
   if (!userSession.value) {
     return navigateTo("/login");
   }
+});
+
+const getUser = async () => {
+  console.log("clicked");
+  try {
+    currentUser.value = await getCurrentUser(
+      userSession.value.user_metadata.email
+    );
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+  console.log("wawa");
+};
+
+onBeforeMount(async () => {
+  await getUser();
 });
 </script>
 

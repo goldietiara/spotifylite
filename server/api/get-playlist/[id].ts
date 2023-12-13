@@ -4,11 +4,16 @@ const prisma = new PrismaClient();
 export default defineEventHandler(async (event) => {
   const id: string | any = getRouterParam(event, "id");
 
-  const result = await prisma.playlist.findUnique({
+  const playlistResult = await prisma.playlist.findUnique({
     where: {
       id: parseInt(id),
     },
     include: { songs: { include: { Album: { include: { Artist: true } } } } },
   });
-  return result;
+
+  const userResult = await prisma.user.findUnique({
+    where: { id: playlistResult?.userId },
+  });
+
+  return { playlist: playlistResult, user: userResult };
 });

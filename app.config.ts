@@ -90,5 +90,8 @@ export default defineAppConfig({
       background: "bg-zinc-800 dark:bg-zinc-800",
       overlay: { background: "bg-black/50 dark:bg-black/50" },
     },
+    skeleton: {
+      background: "bg-zinc-800",
+    },
   },
 });

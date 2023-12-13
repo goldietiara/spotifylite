@@ -1,30 +1,8 @@
 <script setup>
 const client = useSupabaseClient();
-const userSession = useSupabaseUser();
 const router = useRouter();
-const userStore = useUserStore();
-const { userByEmail } = storeToRefs(userStore);
-const { getUserByEmail } = userStore;
-const currentUser = ref({});
-
-const getCurrentUser = async (email) => {
-  try {
-    userByEmail.value = await getUserByEmail(email);
-  } catch (error) {
-    console.log(error);
-    throw error; // Re-throw the error to propagate it to the caller
-  }
-};
-
-onBeforeMount(() => {
-  getCurrentUser(userSession.value.user_metadata.email);
-});
-
-onMounted(() => {
-  watch(userByEmail, () => {
-    currentUser.value = userByEmail.value;
-  });
-});
+const authStore = useAuthStore();
+const { currentUser } = storeToRefs(authStore);
 
 const back = () => {
   router.go(-1);
@@ -114,7 +92,7 @@ const items = [
         :ui="{ rounded: 'rounded-full' }"
         class="hover:scale-105 transition-all ease-in-out duration-150"
       >
-        <!-- <template #leading>
+        <template #leading>
           <UAvatar
             :src="currentUser.image"
             size="xs"
@@ -124,7 +102,7 @@ const items = [
               text: 'text-gray-200 dark:text-gray-200',
             }"
           />
-        </template> -->
+        </template>
       </UButton>
     </UDropdown>
   </div>

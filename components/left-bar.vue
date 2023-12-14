@@ -1,13 +1,14 @@
 <script setup>
 import { useAuthStore } from "~/stores/auth";
+import { usePlaylistStore } from "~/stores/playlist";
 import PlaylistSongCard from "./cards/playlist-songs-card.vue";
 
 const route = useRoute();
-const currentRoute = ref(route.path);
 
 const runtimeConfig = useRuntimeConfig();
 const userSession = useSupabaseUser();
 
+///current user store
 const authStore = useAuthStore();
 const { getCurrentUser } = authStore;
 const {
@@ -21,6 +22,12 @@ const {
   userIsArtist,
   refetch,
 } = storeToRefs(authStore);
+
+///playlist store
+const playlistStore = usePlaylistStore();
+const { getCurrentPlaylist } = playlistStore;
+const { playlist, playlistSongs, playlistOwner, refetchPlaylist } =
+  storeToRefs(playlistStore);
 
 const search = ref("");
 const width = ref(false);
@@ -121,6 +128,18 @@ const getUser = async () => {
   console.log("wawa");
 };
 
+/// fetch playlist by id
+const getPlaylist = async (id) => {
+  console.log(`fetching: ${route.path}`);
+  try {
+    playlist.value = await getCurrentPlaylist(id);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+  console.log(`fetched: ${route.path}`);
+};
+
 // onBeforeMount(async () => {
 //   await getUser();
 // });
@@ -147,15 +166,25 @@ watch(currentUser, () => {
   followers.value = userProfile.value.following;
 });
 
-// watch(
-//   () => currentRoute,
-//   () => {
-//     return console.log(`current route:`);
-//   }
-// );
-
-watchEffect(() => {
+watchEffect(async () => {
   console.log(currentUser.value);
+  if (route.name === "playlist-id") {
+    await getPlaylist(route.params.id);
+  }
+});
+
+watch(playlist, () => {
+  playlistOwner.value = playlist.value.userProfile.User;
+  playlistSongs.value = playlist.value.songs;
+  console.log(playlist.value);
+});
+
+///re-fetch after updating playlist
+watch(refetchPlaylist, async () => {
+  if (!refetchPlaylist.value) return;
+  await getPlaylist(route.params.id);
+  console.log("refetch current user");
+  refetch.value = false;
 });
 </script>
 

@@ -1,35 +1,45 @@
 <script setup>
-const userSession = useSupabaseUser();
-const runtimeConfig = useRuntimeConfig();
+import { useAuthStore } from "~/stores/auth";
+import { usePlaylistStore } from "~/stores/playlist";
 const route = useRoute();
+
+///get logged in user
+const authStore = useAuthStore();
+const { currentUser, likedSongs } = storeToRefs(authStore);
+
+///get current playlist
+const playlistStore = usePlaylistStore();
+const { playlist, playlistSongs, playlistOwner, refetchPlaylist } =
+  storeToRefs(playlistStore);
+
 const bgColor = ref("");
-
-const userStore = useUserStore();
-const { playlistById, getPlaylist, userById } = storeToRefs(userStore);
-const { getPlaylistById } = userStore;
 const isOpen = ref(false);
-const userLikedSongs = ref([]);
-const getPlaylistSongs = ref([]);
 
-const getCurrentPlaylist = async () => {
-  try {
-    await getPlaylistById(route.params.id);
-  } catch (error) {
-    console.log(error);
-    throw error; // Re-throw the error to propagate it to the caller
+///search functionality
+const q = ref("");
+
+const searchIcon = ref(false);
+
+const filteredRows = computed(() => {
+  if (!q.value) {
+    return playlistSongs.value;
+  }
+  return playlistSongs.value.filter((person) => {
+    return Object.values(person).some((value) => {
+      return String(value).toLowerCase().includes(q.value.toLowerCase());
+    });
+  });
+});
+
+///get logged in user liked songs
+const isLiked = (id) => {
+  const result = likedSongs.value.find((v) => v.id === id);
+  if (result) {
+    return true;
   }
 };
 
-watchEffect(async () => {
-  await getCurrentPlaylist();
-});
-
-watch(playlistById, async () => {
-  getImageColor(getPlaylist.value.image);
-  console.log(getPlaylist.value);
-  console.log(playlistById.value);
-});
-
+///get background color
 const getImageColor = async (image) => {
   try {
     const color = await getColorFromImage(image);
@@ -40,19 +50,8 @@ const getImageColor = async (image) => {
   }
 };
 
-const q = ref("");
-
-const searchIcon = ref(false);
-
-const filteredRows = computed(() => {
-  if (!q.value) {
-    return getPlaylistSongs.value;
-  }
-  return getPlaylistSongs.value.filter((person) => {
-    return Object.values(person).some((value) => {
-      return String(value).toLowerCase().includes(q.value.toLowerCase());
-    });
-  });
+watchEffect(async () => {
+  await getImageColor(playlist.value.image);
 });
 
 // const isUser = computed(() => {
@@ -62,28 +61,25 @@ const filteredRows = computed(() => {
 //     return true;
 //   }
 // });
-
-const likedSongs = (id) => {
-  const result = userLikedSongs.value.find((v) => v.id === id);
-  if (result) {
-    return true;
-  }
-};
 </script>
 
 <template>
   <main class="relative w-full h-full overflow-y-auto">
-    <!-- <div
+    <div
       class="h-screen w-full absolute top-0 z-0"
       :style="{
         background: `linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 10%, ${bgColor} 100%)`,
       }"
-    ></div> -->
+    ></div>
 
     <section class="z-20 pt-20">
-      <CardsPlaylistProfileHeader :type="'playlist'" :data="getPlaylist" />
+      <CardsPlaylistProfileHeader
+        :type="'playlist'"
+        :data="playlist"
+        :owner="playlistOwner"
+      />
 
-      <!-- <div class="mt-10 relative">
+      <div class="mt-10 relative">
         <div class="w-full h-[500px] bg-zinc-900/20 absolute top-0 z-0"></div>
         <div class="py-3 px-6 flex flex-col gap-5">
           <div class="flex px-3 py-3.5 pt-5 justify-between items-center">
@@ -123,19 +119,21 @@ const likedSongs = (id) => {
           <UModal v-model="isOpen">
             <FormPlaylistUserUpdate
               :type="'playlist'"
-              :data="getPlaylist"
-              :runtimeConfig="runtimeConfig"
+              :data="playlist"
               :onCloseModal="() => (isOpen = onCloseModal)"
+              :onIsRefetch="() => (refetchPlaylist = true)"
             />
           </UModal>
 
           <Table
+            :type="'playlist'"
+            :likedSongs="isLiked"
             :filteredRows="filteredRows"
-            :likedSongs="likedSongs"
-            :data="userById"
+            :userId="currentUser.userProfileId"
           />
         </div>
-      </div> -->
+      </div>
+
       <Footer></Footer>
     </section>
   </main>

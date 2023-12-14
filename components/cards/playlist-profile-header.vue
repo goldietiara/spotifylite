@@ -1,5 +1,5 @@
 <script setup>
-const { type, data } = defineProps(["type", "data"]);
+const { type, data, owner } = defineProps(["type", "data", "owner"]);
 const router = useRouter();
 const go = (id) => {
   if (type === "playlist") {
@@ -59,11 +59,9 @@ const go = (id) => {
       <div class="flex items-center gap-1">
         <div v-show="type !== 'user'">
           <div
-            v-if="type === 'playlist' ? data.userImage : data.artistImage"
+            v-if="type !== 'user' && owner.image"
             :style="{
-              backgroundImage: `url(${
-                type === 'playlist' ? data.userImage : data.artistImage
-              })`,
+              backgroundImage: `url(${owner.image})`,
             }"
             alt="user-profile"
             class="rounded-full w-[30px] h-[30px] bg-cover bg-center"
@@ -72,19 +70,17 @@ const go = (id) => {
         </div>
 
         <p
-          v-if="type === 'playlist' ? data.id : data.artistId"
+          v-if="type === 'user' ? data.playlist : owner.name"
           :class="
             type !== 'user' &&
             'font-semibold hover:underline hover:underline-offset-4 hover:cursor-pointer'
           "
-          @click="go(type === 'playlist' ? data.id : data.artistId)"
+          @click="go(owner.id)"
         >
           {{
-            type === "playlist"
-              ? data.user
-              : type === "artist"
-              ? data.artist
-              : `Public Playlist ${data.playlist.length}`
+            type === "user"
+              ? `Public Playlist ${data.playlist.length}`
+              : owner.name
           }}
         </p>
         <USkeleton v-else class="w-[50px] h-[20px]" />
@@ -106,7 +102,11 @@ const go = (id) => {
             ' hover:underline hover:underline-offset-4 hover:cursor-pointer'
           "
         >
-          {{ type === "user" ? `50 Following` : `${data.songs} songs` }}
+          {{
+            type === "user"
+              ? `50 Following`
+              : `${data.songs ? data.songs.length : 0} songs`
+          }}
         </p>
         <USkeleton v-else class="w-[50px] h-[20px]" />
       </div>

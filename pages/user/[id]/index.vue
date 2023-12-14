@@ -1,4 +1,5 @@
 <script setup>
+import { useAuthStore } from "~/stores/auth";
 const bgColor = ref("");
 
 const authStore = useAuthStore();
@@ -20,10 +21,6 @@ const getImageColor = async (image) => {
 };
 
 watchEffect(async () => {
-  await getImageColor(currentUser.value.image);
-});
-
-watch(currentUser, async () => {
   await getImageColor(currentUser.value.image);
 });
 </script>

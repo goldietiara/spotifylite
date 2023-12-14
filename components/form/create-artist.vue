@@ -2,9 +2,15 @@
 import { z } from "zod";
 import type { FormSubmitEvent } from "#ui/types";
 
-const { data, client } = defineProps(["data", "client"]);
-const emit = defineEmits(["closeModal"]);
 const runtimeConfig = useRuntimeConfig();
+
+const { data, client } = defineProps(["data", "client"]);
+
+const load = ref(false);
+const form = ref();
+const files = ref("");
+const filesHeader = ref("");
+const emit = defineEmits(["closeModal", "isRefetch"]);
 
 const state = reactive({
   userId: data.id,
@@ -32,10 +38,7 @@ const schema = z.object({
   header: z.string().url().nonempty(),
   headerName: z.string().nonempty(),
 });
-
-const files = ref("");
-
-const filesHeader = ref("");
+type Schema = z.infer<typeof schema>;
 
 onMounted(() => {
   files.value = data.avatar_url;
@@ -72,12 +75,10 @@ const uploadHeader = (e: any) => {
   };
 };
 
-type Schema = z.infer<typeof schema>;
-const form = ref();
-
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   let newImage = null;
   let newHeader = null;
+  load.value = true;
 
   if (files.value) {
     const { data, error } = await client.storage
@@ -117,12 +118,14 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         headerName: newHeader,
       },
     });
+    load.value = false;
     emit("closeModal", false);
     return result;
   } catch (error) {
     console.log(`something went wrong: ${error}`);
+    load.value = false;
   }
-  // navigateTo(result.id)
+  emit("isRefetch", true);
 }
 </script>
 
@@ -236,8 +239,15 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           color="white"
           type="submit"
           :ui="{ rounded: 'rounded-full' }"
-          class="px-7 py-4 self-end hover:scale-110 transition-all ease-out duration-100"
-        />
+          class="px-7 py-4 self-end hover:scale-110 transition-all ease-out duration-100 flex justify-center items-center w-[80px]"
+        >
+          <p v-if="!load">Save</p>
+          <UIcon
+            v-else
+            class="bg-green-500 animate-spin text-xl"
+            name="i-ph-circle-notch-bold"
+          />
+        </UButton>
       </div>
     </UForm>
     <p class="text-xs z-30">

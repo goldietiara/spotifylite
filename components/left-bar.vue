@@ -3,6 +3,7 @@ import { useAuthStore } from "~/stores/auth";
 import PlaylistSongCard from "./cards/playlist-songs-card.vue";
 
 const route = useRoute();
+const currentRoute = ref(route.path);
 
 const runtimeConfig = useRuntimeConfig();
 const userSession = useSupabaseUser();
@@ -18,12 +19,12 @@ const {
   following,
   followers,
   userIsArtist,
+  refetch,
 } = storeToRefs(authStore);
 
 const search = ref("");
 const width = ref(false);
 const load = ref(false);
-const refetch = ref(false);
 
 /// FIX-LATER: playlist not showing the right result, when refreshing page on user page
 
@@ -38,11 +39,11 @@ function currentPage(currentPath) {
 const data = ref([]);
 
 watch(currentUser, () => {
-  data.value = currentUser.value.playlist;
+  data.value = userPlaylist.value;
 });
 
 watch(search, () => {
-  data.value = currentUser.value.playlist.filter((v) =>
+  data.value = userPlaylist.value.filter((v) =>
     v.name.toLowerCase().includes(search.value.toLowerCase())
   );
 });
@@ -145,6 +146,13 @@ watch(currentUser, () => {
   following.value = userProfile.value.followers;
   followers.value = userProfile.value.following;
 });
+
+// watch(
+//   () => currentRoute,
+//   () => {
+//     return console.log(`current route:`);
+//   }
+// );
 
 watchEffect(() => {
   console.log(currentUser.value);

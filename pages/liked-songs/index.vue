@@ -1,37 +1,33 @@
 <script setup>
 import Table from "../../../components/table.vue";
 
-const router = useRouter();
 const authStore = useAuthStore();
-const { currentUser } = storeToRefs(authStore);
-// const { userByEmail, getUserLikes, getUserLikesPlaylist } =
-//   storeToRefs(userStore)
+const { currentUser, likedSongs } = storeToRefs(authStore);
 
 const q = ref("");
-
 const searchIcon = ref(false);
 
 const filteredRows = computed(() => {
   if (!q.value) {
-    return getUserLikesPlaylist.value;
+    return likedSongs.value;
   }
-  return getUserLikesPlaylist.value.filter((person) => {
+  return likedSongs.value.filter((person) => {
     return Object.values(person).some((value) => {
       return String(value).toLowerCase().includes(q.value.toLowerCase());
     });
   });
 });
 
-const likedSongs = (id) => {
-  const result = getUserLikes.value.find((v) => v.id === id);
+const isLiked = (id) => {
+  const result = likedSongs.value.find((v) => v.id === id);
   if (result) {
     return true;
   }
 };
 
-const go = (id) => {
-  router.push(`/user/${id}`);
-};
+watchEffect(() => {
+  console.log(likedSongs.value);
+});
 </script>
 
 <template>
@@ -58,20 +54,24 @@ const go = (id) => {
           <div class="flex items-center gap-1">
             <div
               :style="{
-                backgroundImage: `url(${userByEmail.image})`,
+                backgroundImage: `url(${currentUser.image})`,
               }"
               alt="user-profile"
               class="rounded-full w-[30px] h-[30px] bg-cover bg-center"
             />
 
-            <p @click="go(userByEmail.id)">
-              {{ userByEmail.name }}
-            </p>
+            <nuxt-link
+              :to="`user/${currentUser.id}`"
+              class="font-semibold hover:underline hover:underline-offset-4 hover:cursor-pointer"
+            >
+              {{ currentUser.name }}
+            </nuxt-link>
 
             <UIcon name="i-ph-dot-outline-fill" />
-            <p>
-              {{ `${getUserLikesPlaylist.length} songs` }}
+            <p v-if="likedSongs && likedSongs.length">
+              {{ `${likedSongs.length} songs` }}
             </p>
+            <USkeleton v-else class="w-[50px] h-[20px]" />
           </div>
         </div>
       </div>
@@ -115,15 +115,14 @@ const go = (id) => {
           </div>
 
           <Table
-            :type="'playlist'"
-            :likedSongs="likedSongs"
+            :type="'liked playlist'"
+            :likedSongs="isLiked"
             :filteredRows="filteredRows"
-            :data="userByEmail.userProfile"
+            :userId="currentUser.userProfileId"
           />
         </div>
       </div>
       <Footer></Footer>
     </section>
   </main>
-  wawa
 </template>

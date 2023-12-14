@@ -3,33 +3,20 @@ const route = useRoute();
 const bgColor = ref("");
 const userId = ref(route.params.id);
 
-const userStore = useUserStore();
-const { userById } = storeToRefs(userStore);
-const { getUserById } = userStore;
+const authStore = useAuthStore();
+const { getCurrentUser } = authStore;
+const {
+  userProfile,
+  currentUser,
+  userPlaylist,
+  following,
+  followers,
+  userIsArtist,
+} = storeToRefs(authStore);
 
 const isOpen = ref(false);
 const isArtistOpen = ref(false);
 const client = useSupabaseClient();
-
-const getCurrentUser = async (id) => {
-  try {
-    userById.value = await getUserById(id);
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-
-onBeforeMount(() => {
-  getCurrentUser(userId.value);
-});
-
-onMounted(() => {
-  watch(userById, () => {
-    getImageColor(userById.value?.image);
-    console.log(userById.value);
-  });
-});
 
 const getImageColor = async (image) => {
   try {
@@ -40,6 +27,14 @@ const getImageColor = async (image) => {
     console.error(error.message);
   }
 };
+
+watchEffect(async () => {
+  await getImageColor(currentUser.value.image);
+});
+
+watch(currentUser, async () => {
+  await getImageColor(currentUser.value.image);
+});
 </script>
 
 <template>
@@ -52,14 +47,14 @@ const getImageColor = async (image) => {
     ></div>
 
     <section class="z-20 pt-20">
-      <CardsPlaylistProfileHeader :data="userById" :type="'user'" />
+      <CardsPlaylistProfileHeader :type="'user'" :data="currentUser" />
 
       <div class="mt-10 relative">
         <div class="w-full h-[500px] bg-zinc-900/20 absolute top-0 z-0"></div>
         <div class="py-3 px-6">
           <PlayerDetailFollow
-            :isArtist="userById.isArtist"
-            :artistId="userById.artistId"
+            :isArtist="currentUser.isArtist"
+            :artistId="currentUser.artistId"
             :type="'user'"
             @open-modal="isOpen = true"
             @open-artist-modal="isArtistOpen = true"
@@ -68,7 +63,7 @@ const getImageColor = async (image) => {
 
           <UModal v-model="isOpen">
             <FormPlaylistUserUpdate
-              :data="userById"
+              :data="currentUser"
               :type="'user'"
               :onCloseModal="() => (isOpen = onCloseModal)"
             />
@@ -76,7 +71,7 @@ const getImageColor = async (image) => {
 
           <UModal v-model="isArtistOpen">
             <FormCreateArtist
-              :data="userById"
+              :data="currentUser"
               :type="'artist'"
               :onCloseModal="() => (isArtistOpen = onCloseModal)"
               :client="client"
@@ -86,19 +81,18 @@ const getImageColor = async (image) => {
           <div class="flex flex-col gap-10">
             <CardsPlaylistUserCard
               :type="'playlist'"
-              :data="userById"
+              :data="userPlaylist"
+              :owner="currentUser"
               :name="'Public Playlist'"
             />
 
             <CardsPlaylistUserCard
-              :data="userById"
-              :userProfile="userById"
+              :data="following"
               :type="'user'"
               :name="'Following'"
             />
             <CardsPlaylistUserCard
-              :data="userById"
-              :userProfile="userById"
+              :data="followers"
               :type="'user'"
               :name="'Followers'"
             />

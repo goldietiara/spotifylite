@@ -9,12 +9,23 @@ const userSession = useSupabaseUser();
 
 const authStore = useAuthStore();
 const { getCurrentUser } = authStore;
-const { currentUser } = storeToRefs(authStore);
+const {
+  userProfile,
+  currentUser,
+  userPlaylist,
+  likedSongs,
+  likedPlaylist,
+  following,
+  followers,
+  userIsArtist,
+} = storeToRefs(authStore);
 
 const search = ref("");
 const width = ref(false);
 const load = ref(false);
 const refetch = ref(false);
+
+/// FIX-LATER: playlist not showing the right result, when refreshing page on user page
 
 /// styling
 function currentPage(currentPath) {
@@ -123,6 +134,20 @@ watch(refetch, async () => {
   await getUser();
   console.log("refetch current user");
   refetch.value = false;
+});
+
+watch(currentUser, () => {
+  userPlaylist.value = currentUser.value.playlist;
+  userProfile.value = currentUser.value.userProfile;
+
+  likedSongs.value = userProfile.value.likedSongs;
+  likedPlaylist.value = userProfile.value.likedPlaylist;
+  following.value = userProfile.value.followers;
+  followers.value = userProfile.value.following;
+});
+
+watchEffect(() => {
+  console.log(currentUser.value);
 });
 </script>
 
@@ -283,7 +308,7 @@ watch(refetch, async () => {
           <USkeleton class="w-[50px] h-[15px]" />
         </div>
       </div>
-      <div v-show="fetch === true" class="py-2 px-3 flex gap-3 items-center">
+      <div v-show="refetch === true" class="py-2 px-3 flex gap-3 items-center">
         <USkeleton
           class="h-[50px] min-w-[50px] flex justify-center items-center rounded-md"
         />

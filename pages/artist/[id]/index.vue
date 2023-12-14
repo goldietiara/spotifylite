@@ -41,7 +41,7 @@ const getImageColor = async (image) => {
 </script>
 
 <template>
-  <main
+  <!-- <main
     class="relative w-full h-full overflow-y-auto bg-contain"
     :style="{
       backgroundImage: `url(${artistById.header})`,
@@ -110,5 +110,5 @@ const getImageColor = async (image) => {
         </div>
       </div>
     </section>
-  </main>
+  </main> -->
 </template>

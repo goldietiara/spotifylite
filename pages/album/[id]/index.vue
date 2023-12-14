@@ -72,7 +72,7 @@ const likedSongs = (id) => {
 </script>
 
 <template>
-  <main class="relative w-full h-full overflow-y-auto">
+  <!-- <main class="relative w-full h-full overflow-y-auto">
     <div
       class="h-screen w-full absolute top-0 z-0"
       :style="{
@@ -137,5 +137,5 @@ const likedSongs = (id) => {
       </div>
       <Footer></Footer>
     </section>
-  </main>
+  </main> -->
 </template>

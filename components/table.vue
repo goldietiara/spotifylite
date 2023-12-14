@@ -3,17 +3,12 @@ import { z } from "zod";
 import type { FormSubmitEvent } from "#ui/types";
 
 const router = useRouter();
-const { filteredRows, likedSongs, type, data } = defineProps([
+const { filteredRows, likedSongs, type, userId } = defineProps([
   "filteredRows",
   "likedSongs",
   "type",
-  "data",
+  "userId",
 ]);
-
-// console.log(data.likedSongs);
-// watch(data, () => {
-//   likedSongs();
-// });
 
 const columns = [
   {
@@ -36,18 +31,6 @@ const columns = [
     key: "like",
   },
 ];
-
-const state = reactive({
-  like: "",
-});
-
-watch(state, () => console.log(state));
-
-const schema = z.object({
-  like: z.string(),
-});
-
-type Schema = z.infer<typeof schema>;
 
 async function likingSong(id: number, userId: number) {
   console.log(id);
@@ -98,6 +81,7 @@ const items = [
     },
   ],
 ];
+
 const addToPlaylist = [
   [
     {
@@ -142,8 +126,8 @@ const addToPlaylist = [
     <template #name-data="{ row }">
       <div class="flex justify-start gap-4 items-center">
         <div
-          v-show="type == 'playlist'"
-          :style="{ backgroundImage: `url(${row.image})` }"
+          v-show="type !== 'album'"
+          :style="{ backgroundImage: `url(${row.Album.image})` }"
           alt="playlist/songs-image"
           class="h-[50px] min-w-[50px] bg-cover bg-center rounded-sm"
         ></div>
@@ -155,9 +139,9 @@ const addToPlaylist = [
           </h1>
           <p
             class="hover:underline hover:underline-offset-4 hover:cursor-pointer"
-            @click="router.push(`/artist/${row.artistId}`)"
+            @click="router.push(`/artist/${row.Album.Artist.artistId}`)"
           >
-            {{ row.artist }}
+            {{ row.Album.Artist.name }}
           </p>
         </div>
       </div>
@@ -165,9 +149,9 @@ const addToPlaylist = [
     <template #albumName-data="{ row }">
       <p
         class="hover:underline hover:underline-offset-4 hover:cursor-pointer"
-        @click="router.push(`/album/${row.albumId}`)"
+        @click="router.push(`/album/${row.Album.id}`)"
       >
-        {{ row.albumName }}
+        {{ row.Album.name }}
       </p>
     </template>
     <template #like-data="{ row }">
@@ -180,13 +164,13 @@ const addToPlaylist = [
           "
         >
           <UIcon
-            @click="UnLike(row.id, data.id)"
+            @click="UnLike(row.id, userId)"
             class="text-xl bg-green-400 hover:bg-green-300 hover:cursor-pointer hover:scale-110"
             name="i-ph-heart-fill"
             v-if="likedSongs(row.id)"
           />
           <UIcon
-            @click="likingSong(row.id, data.id)"
+            @click="likingSong(row.id, userId)"
             class="text-xl opacity-0 hover:cursor-pointer group-hover:opacity-100 hover:bg-gray-200 hover:scale-110 transition-all duration-100 ease-in-out"
             name="i-ph-heart"
             v-else

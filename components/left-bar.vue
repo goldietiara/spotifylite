@@ -1,14 +1,14 @@
 <script setup>
 import { useAuthStore } from "~/stores/auth";
 import PlaylistSongCard from "./cards/playlist-songs-card.vue";
-import { useAsyncData } from "nuxt/app";
-import { onMounted } from "vue";
 
 const route = useRoute();
-const router = useRouter();
 
 const runtimeConfig = useRuntimeConfig();
+const userSession = useSupabaseUser();
+
 const authStore = useAuthStore();
+const { getCurrentUser } = authStore;
 const { currentUser } = storeToRefs(authStore);
 
 const search = ref("");
@@ -16,13 +16,16 @@ const width = ref(false);
 const load = ref(false);
 const refetch = ref(false);
 
+/// styling
 function currentPage(currentPath) {
   if (route.path === currentPath) {
     return "text-white/90";
   } else return "text-white/40";
 }
 
+/// search current user playlist function
 const data = ref([]);
+
 watch(currentUser, () => {
   data.value = currentUser.value.playlist;
 });
@@ -33,6 +36,7 @@ watch(search, () => {
   );
 });
 
+/// create new playlist
 const state = reactive({
   id: currentUser.value.id,
   name: `New Playlist #${
@@ -49,11 +53,13 @@ const state = reactive({
   }.jpg`,
 });
 
-watchEffect(() => {
+watch(currentUser, () => {
   console.log(state);
 });
 
 async function createPlaylist(data) {
+  load.value = true;
+
   try {
     const result = await useFetch(`/api/create-playlist/`, {
       method: "POST",
@@ -81,6 +87,43 @@ async function createPlaylist(data) {
   }
   refetch.value = true;
 }
+
+/// checked user is logged in
+watchEffect(() => {
+  if (!userSession.value) {
+    return navigateTo("/login");
+  }
+});
+
+/// fetch logged in user
+const getUser = async () => {
+  console.log("clicked");
+  try {
+    currentUser.value = await getCurrentUser(
+      userSession.value.user_metadata.email
+    );
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+  console.log("wawa");
+};
+
+// onBeforeMount(async () => {
+//   await getUser();
+// });
+
+watchEffect(async () => {
+  await getUser();
+});
+
+///re-fetch after adding new playlist
+watch(refetch, async () => {
+  if (!refetch.value) return;
+  await getUser();
+  console.log("refetch current user");
+  refetch.value = false;
+});
 </script>
 
 <template>
@@ -181,8 +224,8 @@ async function createPlaylist(data) {
       </div>
       <div v-if="currentUser.playlist">
         <div v-if="data.length > 0">
-          <div
-            @click="router.push(`/liked-songs`)"
+          <nuxt-link
+            to="/liked-songs"
             class="py-2 px-3 flex gap-3 items-center text-white/90 ease-in-out transition-all duration-150 rounded-md hover:bg-zinc-50/5 hover:cursor-pointer"
           >
             <div
@@ -201,7 +244,7 @@ async function createPlaylist(data) {
                 <!-- {{ `Playlist - ${currentUser.playlist.length} songs` }} -->
               </p>
             </div>
-          </div>
+          </nuxt-link>
 
           <PlaylistSongCard
             :type="'playlist'"
@@ -228,6 +271,19 @@ async function createPlaylist(data) {
       </div>
 
       <div v-else class="py-2 px-3 flex gap-3 items-center">
+        <USkeleton
+          class="h-[50px] min-w-[50px] flex justify-center items-center rounded-md"
+        />
+
+        <div
+          class="max-w-fit min-w-[0px] flex flex-col gap-1"
+          v-show="width === false"
+        >
+          <USkeleton class="w-[100px] h-[25px]" />
+          <USkeleton class="w-[50px] h-[15px]" />
+        </div>
+      </div>
+      <div v-show="fetch === true" class="py-2 px-3 flex gap-3 items-center">
         <USkeleton
           class="h-[50px] min-w-[50px] flex justify-center items-center rounded-md"
         />

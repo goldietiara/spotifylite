@@ -1,15 +1,22 @@
 import { defineStore } from "pinia";
 
+//current user
+
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     currentUser: {},
+    likedSongs: [],
+    likedPlaylist: [],
+    following: [],
+    followers: [],
+    userIsArtist: {},
   }),
 
   actions: {
     async getCurrentUser(email: any) {
       try {
         const result = await useFetch(`/api/auth/${email}`);
-        console.log(result.data.value); // Log the result to check if it's populated
+        console.log(result.data.value); //to check if it's populated
         this.currentUser = result.data;
         return this.currentUser;
       } catch (error) {

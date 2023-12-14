@@ -5,7 +5,7 @@ const router = useRouter();
 const authStore = useAuthStore();
 const { currentUser } = storeToRefs(authStore);
 // const { userByEmail, getUserLikes, getUserLikesPlaylist } =
-//   storeToRefs(userStore);
+//   storeToRefs(userStore)
 
 const q = ref("");
 

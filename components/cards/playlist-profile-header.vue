@@ -11,6 +11,10 @@ const go = (id) => {
   <div
     class="flex flex-wrap justify-start items-end gap-7 h-[250px] w-full text-white px-6 z-10"
   >
+    <!-- FIX LATTER:
+     as if v-if="data.wawa"
+    to be v-if="data" 
+    -->
     <div
       v-if="data.image"
       :style="{

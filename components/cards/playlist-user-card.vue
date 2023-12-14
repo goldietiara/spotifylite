@@ -1,10 +1,10 @@
 <script setup>
 const router = useRouter();
-const { data, type, name, artist } = defineProps([
+const { data, type, name, owner } = defineProps([
   "data",
   "type",
   "name",
-  "artist",
+  "owner",
 ]);
 
 const go = (id) => {
@@ -19,13 +19,11 @@ const go = (id) => {
 <template>
   <div class="flex flex-col gap-5 z-10">
     <h1 class="text-xl font-bold text-gray-200">{{ name }}</h1>
-    <div class="mx-5 flex gap-5">
+    <div class="mx-5 flex gap-5 flex-wrap">
       <!-- vfor -->
       <div
         class="w-[190px] h-[270px] rounded-lg overflow-clip bg-zinc-900 group cursor-pointer"
-        v-for="(value, index) in type === 'playlist'
-          ? data.playlist
-          : data.album"
+        v-for="(value, index) in data"
         :key="index"
         @click="go(value.id)"
       >
@@ -33,13 +31,19 @@ const go = (id) => {
           class="w-full h-full flex flex-col gap-3 items-center p-4 bg-white/5 group-hover:bg-white/10 transition-all ease-out duration-150"
         >
           <div
+            v-if="data"
             :style="{
               backgroundImage: `url(${value.image})`,
             }"
             alt="playlist/people-image"
-            class="w-[160px] h-[160px] bg-cover bg-center relative"
+            class="relative w-[160px] h-[160px] bg-cover bg-center bg-zinc-700/30 flex justify-center items-center"
             :class="type === 'user' ? 'rounded-full' : 'rounded-lg'"
           >
+            <UIcon
+              v-show="!value.image"
+              class="opacity-30 text-6xl"
+              name="i-ph-music-notes"
+            />
             <UButton
               :ui="{
                 rounded: 'rounded-full',
@@ -50,21 +54,39 @@ const go = (id) => {
               <UIcon name="i-heroicons-play-20-solid" class="text-xl" />
             </UButton>
           </div>
+          <USkeleton
+            v-else
+            class="w-[160px] h-[160px]"
+            :ui="{ background: 'bg-zinc-700' }"
+          />
+
           <div
             class="text-sm text-gray-400 w-full flex flex-col font-light items-start"
           >
-            <h1 class="text-gray-200 font-semibold">
+            <h1 v-if="data" class="text-gray-200 font-semibold">
               {{ value.name || "Playlist Name" }}
             </h1>
-            <p>
+            <USkeleton
+              v-else
+              class="w-[100px] h-[20px] mb-1"
+              :ui="{ background: 'bg-zinc-700' }"
+            />
+
+            <p v-if="data">
+              <!-- FIX LATER~ kalo dia follow artist berarti nanti jadi !userid ? `Profile` : `Artist`-->
               {{
                 type === "user"
                   ? `Profile`
                   : type === "artist"
                   ? `Artist`
-                  : `by ${data.name}`
+                  : `by ${owner.name}`
               }}
             </p>
+            <USkeleton
+              v-else
+              class="w-[70px] h-[15px]"
+              :ui="{ background: 'bg-zinc-700' }"
+            />
           </div>
         </div>
       </div>

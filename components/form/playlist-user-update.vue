@@ -2,23 +2,30 @@
 import { z } from "zod";
 import type { FormSubmitEvent } from "#ui/types";
 
-const client = useSupabaseClient();
-const { data, type, runtimeConfig } = defineProps([
-  "data",
-  "type",
-  "runtimeConfig",
-]);
-const load = ref(false);
+/// FIX LATER: i think user can have no pict, but idk still thinking bout it
 
+const runtimeConfig = useRuntimeConfig();
+const client = useSupabaseClient();
+
+const { data, type } = defineProps(["data", "type"]);
+
+const load = ref(false);
+const files = ref("");
+const form = ref();
+const emit = defineEmits(["closeModal", "isRefetch"]);
+
+///update user or playlist state
 const state = reactive({
   name: data.name,
-  email: data.email || "isEmpty@gmail.com",
-  image: data?.image || "is empty",
-  imageName: data.imageName || "is empty",
+  email: data.email,
+  image: data.image,
+  imageName: data.imageName,
   description: data?.description || "",
 });
-watchEffect(() => console.log(data));
 
+watchEffect(() => console.log(state));
+
+///for validation
 const schema = z.object({
   name: z
     .string()
@@ -29,8 +36,9 @@ const schema = z.object({
   imageName: z.string(),
   description: z.nullable(z.string()),
 });
-const files = ref("");
+type Schema = z.infer<typeof schema>;
 
+/// get image files and read image as URL
 const uploadImage = (e: any) => {
   e.preventDefault();
 
@@ -46,11 +54,7 @@ const uploadImage = (e: any) => {
   };
 };
 
-type Schema = z.infer<typeof schema>;
-
-const form = ref();
-const emit = defineEmits(["closeModal"]);
-
+///update user or playlist function
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   let newImage = null;
   load.value = true;
@@ -58,7 +62,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   if (files.value) {
     const { data, error } = await client.storage
       .from("spotifylite-files")
-      .upload(`${event.data.imageName}`, files.value, {
+      .upload(event.data.imageName, files.value, {
         contentType: "image/jpeg",
         upsert: true,
       });
@@ -93,8 +97,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         method: "patch",
         body: {
           name: event.data.name,
-          image: event.data.image,
-          imageName: event.data.imageName,
+          image: runtimeConfig.public.bucketUrl + newImage,
+          imageName: newImage,
         },
       });
       load.value = false;
@@ -104,6 +108,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       load.value = false;
     }
   }
+  emit("isRefetch", true);
 }
 </script>
 
@@ -147,13 +152,18 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             />
           </div>
         </label>
-        <Input
+        <!-- <input
+          type="file"
+          accept="image/*"
+          id="uploadImage"
+          
+        /> -->
+        <input
           id="uploadImage"
           accept="image/*"
           type="file"
           class="hidden"
-          v-model="state.image"
-          :onchange="(e:any)=>uploadImage(e)"
+          @change="(e:any)=>uploadImage(e)"
         />
       </UFormGroup>
 
@@ -186,16 +196,16 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           :ui="{ rounded: 'rounded-full' }"
           class="px-7 py-4 self-end hover:scale-110 transition-all ease-out duration-100 flex justify-center items-center w-[80px]"
         >
-          <p>Save</p>
+          <p v-if="!load">Save</p>
           <UIcon
-            v-show="load === true"
+            v-else
             class="bg-green-500 animate-spin text-xl"
             name="i-ph-circle-notch-bold"
           />
         </UButton>
       </div>
     </UForm>
-    <p class="text-xs z-30">
+    <p class="text-xs z-50">
       By proceeding, you agree to give Spotify access to the image you choose to
       upload. Please make sure you have the right to upload the image.
     </p>

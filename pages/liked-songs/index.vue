@@ -4,6 +4,8 @@ import Table from "../../../components/table.vue";
 const authStore = useAuthStore();
 const { currentUser, likedSongs } = storeToRefs(authStore);
 
+/// FIX LATER: refetch data when unlike songs
+
 const q = ref("");
 const searchIcon = ref(false);
 

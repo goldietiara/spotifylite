@@ -1,18 +1,9 @@
 <script setup>
-const route = useRoute();
 const bgColor = ref("");
-const userId = ref(route.params.id);
 
 const authStore = useAuthStore();
-const { getCurrentUser } = authStore;
-const {
-  userProfile,
-  currentUser,
-  userPlaylist,
-  following,
-  followers,
-  userIsArtist,
-} = storeToRefs(authStore);
+const { currentUser, userPlaylist, following, followers, refetch } =
+  storeToRefs(authStore);
 
 const isOpen = ref(false);
 const isArtistOpen = ref(false);
@@ -63,18 +54,20 @@ watch(currentUser, async () => {
 
           <UModal v-model="isOpen">
             <FormPlaylistUserUpdate
-              :data="currentUser"
               :type="'user'"
+              :data="currentUser"
               :onCloseModal="() => (isOpen = onCloseModal)"
+              :onIsRefetch="() => (refetch = true)"
             />
           </UModal>
 
           <UModal v-model="isArtistOpen">
             <FormCreateArtist
-              :data="currentUser"
               :type="'artist'"
-              :onCloseModal="() => (isArtistOpen = onCloseModal)"
+              :data="currentUser"
               :client="client"
+              :onCloseModal="() => (isArtistOpen = onCloseModal)"
+              :onIsRefetch="() => (refetch = true)"
             />
           </UModal>
 

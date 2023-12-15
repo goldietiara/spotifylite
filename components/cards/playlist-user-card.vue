@@ -61,9 +61,12 @@ const go = (id) => {
           />
 
           <div
-            class="text-sm text-gray-400 w-full flex flex-col font-light items-start"
+            class="text-sm text-gray-400 w-[160px] flex flex-col font-light items-start"
           >
-            <h1 v-if="data" class="text-gray-200 font-semibold">
+            <h1
+              v-if="data"
+              class="text-gray-200 font-semibold whitespace-nowrap text-ellipsis overflow-hidden"
+            >
               {{ value.name || "Playlist Name" }}
             </h1>
             <USkeleton
@@ -72,7 +75,10 @@ const go = (id) => {
               :ui="{ background: 'bg-zinc-700' }"
             />
 
-            <p v-if="data">
+            <p
+              v-if="data"
+              class="whitespace-nowrap text-ellipsis overflow-hidden"
+            >
               <!-- FIX LATER~ kalo dia follow artist berarti nanti jadi !userid ? `Profile` : `Artist`-->
               {{
                 type === "user"

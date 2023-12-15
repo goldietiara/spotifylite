@@ -1,49 +1,29 @@
 <script setup lang="ts">
 import { z } from "zod";
 import type { FormSubmitEvent } from "#ui/types";
+import { useArtistStore } from "~/stores/artist";
+
+///get current artist
+const artistStore = useArtistStore();
+const { artist } = storeToRefs(artistStore);
 
 const bgColor = ref("");
-const userSession = useSupabaseUser();
 const client = useSupabaseClient();
 const runtimeConfig = useRuntimeConfig();
-
-const userStore = useUserStore();
-const { artistByEmail } = storeToRefs(userStore);
-const { getArtistByEmail } = userStore;
-
-const currentArtist = ref();
-
-const getCurrentArtist = async (email: string) => {
-  try {
-    artistByEmail.value = await getArtistByEmail(email);
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-
-onBeforeMount(() => {
-  getCurrentArtist(userSession?.value?.user_metadata.email);
+const load = ref(false);
+const form = ref();
+const files = ref("");
+const state = reactive({
+  artistId: artist.value?.id || 1,
+  email: artist.value?.email || "goldietiara.acc@gmail.com",
+  name: "",
+  genre: "",
+  image: "",
+  imageName: artist.value?.email || "aaa",
+  items: [""],
 });
 
-onMounted(() => {
-  watch(artistByEmail, () => {
-    currentArtist.value = artistByEmail.value;
-    getImageColor(artistByEmail.value?.image);
-    console.log(currentArtist.value);
-    console.log(bgColor.value);
-  });
-});
-
-const getImageColor = async (image: any) => {
-  try {
-    const color: any = await getColorFromImage(image);
-    bgColor.value = color;
-    console.log(bgColor.value);
-  } catch (error: any) {
-    console.error(error.message);
-  }
-};
+watch(state, () => console.log(state));
 
 const options = [
   { label: "Avant-grade", value: "Avant-grade" },
@@ -65,26 +45,7 @@ const options = [
   { label: "Others", value: "Others" },
 ];
 
-const state = reactive({
-  artistId: artistByEmail?.value?.id || 1,
-  email: artistByEmail?.value?.email || "goldietiara.acc@gmail.com",
-  name: "",
-  genre: "",
-  image: "",
-  imageName: artistByEmail?.value?.email || "aaa",
-  items: [""],
-});
-
-const addItem = (name: string) => {
-  state.items.push(name);
-};
-
-const deleteItem = (index: number) => {
-  state.items.splice(index, 1);
-};
-
-watch(state, () => console.log(state));
-
+///validation
 const schema = z.object({
   artistId: z.number(),
   email: z.string().email(),
@@ -97,8 +58,7 @@ const schema = z.object({
 
 type Schema = z.infer<typeof schema>;
 
-const files = ref("");
-
+///get image url
 const uploadImage = (e: any) => {
   e.preventDefault();
 
@@ -114,12 +74,12 @@ const uploadImage = (e: any) => {
   };
 };
 
-const form = ref();
-
+///upload album and songs to server
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   let newImage = null;
   let imageName = event.data.name.replace(/ /g, "%20");
   // let imageName = event.data.name.replace(/[^a-zA-Z0-9 ] /g, "%20");
+  load.value = true;
 
   if (files.value) {
     const { data, error } = await client.storage
@@ -146,7 +106,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       },
     });
 
-    for (let i = 0; i < event.data.items.length; i++) {
+    for (let i = 0; i < event.data.items.length - 1; i++) {
       await useFetch(`/api/create-song/`, {
         method: "POST",
         body: {
@@ -156,20 +116,44 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         },
       });
     }
-
+    load.value = false;
     return albumResult;
   } catch (error) {
     console.log(`something went wrong: ${error}`);
   }
-  navigateTo(`/artist/${artistByEmail?.value?.id}`);
+  navigateTo(`/artist/${artist.value.id}`);
 }
+
+///add or delete songs function
+const addItem = (name: string) => {
+  state.items.push(name);
+};
+
+const deleteItem = (index: number) => {
+  state.items.splice(index, 1);
+};
+
+///get background color
+const getImageColor = async (image: string) => {
+  try {
+    const color: any = await getColorFromImage(image);
+    bgColor.value = color;
+    console.log(bgColor.value);
+  } catch (error: any) {
+    console.error(error.message);
+  }
+};
+
+watchEffect(async () => {
+  await getImageColor(artist.value.image);
+});
 </script>
 
 <template>
   <main
     class="relative w-full h-full overflow-y-auto bg-contain"
     :style="{
-      backgroundImage: `url(${currentArtist?.header})`,
+      backgroundImage: `url(${artist?.header})`,
     }"
   >
     <section>
@@ -191,18 +175,18 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           <div class="flex gap-5 items-center">
             <div
               :style="{
-                backgroundImage: `url(${currentArtist?.image})`,
+                backgroundImage: `url(${artist?.image})`,
               }"
               alt="playlist/user-image"
               class="w-[90px] h-[90px] bg-zinc-800 bg-cover bg-center flex justify-center items-center rounded-full overflow-clip shadow-zinc-900 shadow-2xl drop-shadow-2xl"
             >
               <UIcon
-                v-show="!currentArtist?.image"
+                v-show="!artist?.image"
                 class="text-6xl opacity-50"
                 name="i-ph-user"
               />
             </div>
-            <h1 class="text-3xl font-bold">{{ currentArtist?.name }}</h1>
+            <h1 class="text-3xl font-bold">{{ artist?.name }}</h1>
           </div>
 
           <UForm
@@ -266,10 +250,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                 />
               </UFormGroup>
             </div>
-            <FormCreateSongs
-              :data="currentArtist"
-              @multiply="(n) => addItem(n)"
-            />
+            <FormCreateSongs :data="artist" @multiply="(n) => addItem(n)" />
 
             <div class="flex flex-col gap-5 w-full pt-10">
               <UFormGroup label="List of Songs">
@@ -293,7 +274,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                         :type="'song'"
                         :song="item"
                         :data="state"
-                        :owner="artistByEmail"
+                        :owner="artist"
                       />
                     </div>
 
@@ -313,12 +294,19 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
             <div class="flex flex-col gap-5">
               <UButton
-                type="submit"
-                label="Publish Album"
+                label="Save"
                 color="white"
+                type="submit"
                 :ui="{ rounded: 'rounded-full' }"
-                class="px-7 py-4 self-end hover:scale-110 transition-all ease-out duration-100"
-              />
+                class="px-7 py-4 self-end hover:scale-110 transition-all ease-out duration-100 flex justify-center items-center w-[80px]"
+              >
+                <p v-if="!load">Save</p>
+                <UIcon
+                  v-else
+                  class="bg-green-500 animate-spin text-xl"
+                  name="i-ph-circle-notch-bold"
+                />
+              </UButton>
               <p class="text-xs">
                 By proceeding, you agree to give Spotify access to the image you
                 choose to upload. Please make sure you have the right to upload

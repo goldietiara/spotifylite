@@ -135,8 +135,6 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         method: "PATCH",
         body: {
           userId: event.data.userId,
-          name: event.data.name,
-          email: event.data.email,
           image: runtimeConfig.public.bucketUrl + newImage,
           imageName: newImage,
           header: runtimeConfig.public.bucketUrl + newHeader,

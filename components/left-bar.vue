@@ -26,6 +26,18 @@ const {
   refetch,
 } = storeToRefs(authStore);
 
+///user store
+const userStore = useUserStore();
+const { getCurrentUserById } = userStore;
+const {
+  userById,
+  userByIdProfile,
+  userByIdPlaylist,
+  userByIdFollowing,
+  userByIdFollowers,
+  refetchUserById,
+} = storeToRefs(userStore);
+
 ///playlist store
 const playlistStore = usePlaylistStore();
 const { getCurrentPlaylist } = playlistStore;
@@ -178,6 +190,18 @@ const getArtist = async (id) => {
   console.log(`artist fetched: ${route.path}`);
 };
 
+/// fetch user by id
+const getUserById = async (id) => {
+  console.log(`fetching artist: ${route.path}`);
+  try {
+    userById.value = await getCurrentUserById(id);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+  console.log(`artist fetched: ${route.path}`);
+};
+
 // onBeforeMount(async () => {
 //   await getUser();
 // });
@@ -212,6 +236,8 @@ watchEffect(async () => {
     await getAlbum(route.params.id);
   } else if (route.name === "artist-id") {
     await getArtist(route.params.id);
+  } else if (route.name === "user-id") {
+    await getUserById(route.params.id);
   } else if (route.name === "new-release") {
     await getArtist(currentUser.value.id);
   }
@@ -246,6 +272,23 @@ watch(artist, () => {
 watch(refetchArtist, async () => {
   if (!refetchArtist.value) return;
   await getArtist(route.params.id);
+  console.log("refetch current user");
+  refetch.value = false;
+});
+
+watch(userById, () => {
+  userByIdProfile.value = userById.value.userProfile;
+  userByIdPlaylist.value = userById.value.playlist;
+  userByIdFollowing.value = userById.value.following;
+  userByIdFollowers.value = userById.value.followers;
+
+  console.log(userById.value);
+});
+
+///re-fetch after updating user data
+watch(refetchUserById, async () => {
+  if (!refetchUserById.value) return;
+  await getUserById(route.params.id);
   console.log("refetch current user");
   refetch.value = false;
 });

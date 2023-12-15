@@ -3,8 +3,9 @@ import { z } from "zod";
 import type { FormSubmitEvent } from "#ui/types";
 
 const runtimeConfig = useRuntimeConfig();
+const client = useSupabaseClient();
 
-const { data, client } = defineProps(["data", "client"]);
+const { data, type } = defineProps(["data", "type"]);
 
 const load = ref(false);
 const form = ref();
@@ -105,25 +106,50 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     }
   }
 
-  try {
-    const result = await useFetch(`/api/create-artist/`, {
-      method: "POST",
-      body: {
-        userId: event.data.userId,
-        name: event.data.name,
-        email: event.data.email,
-        image: runtimeConfig.public.bucketUrl + newImage,
-        imageName: newImage,
-        header: runtimeConfig.public.bucketUrl + newHeader,
-        headerName: newHeader,
-      },
-    });
-    load.value = false;
-    emit("closeModal", false);
-    return result;
-  } catch (error) {
-    console.log(`something went wrong: ${error}`);
-    load.value = false;
+  if (type === "create") {
+    try {
+      const result = await useFetch(`/api/create-artist/`, {
+        method: "POST",
+        body: {
+          userId: event.data.userId,
+          name: event.data.name,
+          email: event.data.email,
+          image: runtimeConfig.public.bucketUrl + newImage,
+          imageName: newImage,
+          header: runtimeConfig.public.bucketUrl + newHeader,
+          headerName: newHeader,
+        },
+      });
+      load.value = false;
+      emit("closeModal", false);
+      return result;
+    } catch (error) {
+      console.log(`something went wrong: ${error}`);
+      load.value = false;
+    }
+  }
+
+  if (type === "update") {
+    try {
+      const result = await useFetch(`/api/update-artist/${data.id}`, {
+        method: "PATCH",
+        body: {
+          userId: event.data.userId,
+          name: event.data.name,
+          email: event.data.email,
+          image: runtimeConfig.public.bucketUrl + newImage,
+          imageName: newImage,
+          header: runtimeConfig.public.bucketUrl + newHeader,
+          headerName: newHeader,
+        },
+      });
+      load.value = false;
+      emit("closeModal", false);
+      return result;
+    } catch (error) {
+      console.log(`something went wrong: ${error}`);
+      load.value = false;
+    }
   }
   emit("isRefetch", true);
 }
@@ -131,7 +157,9 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
 <template>
   <div class="p-5 flex flex-col gap-5">
-    <h1 class="text-xl font-bold">Sign Up for Spotify Artist</h1>
+    <h1 class="text-xl font-bold">
+      {{ type === "create" ? "Sign Up for Spotify Artist" : "Artist Details" }}
+    </h1>
     <UForm
       ref="form"
       :schema="schema"

@@ -139,7 +139,7 @@ const addToPlaylist = [
           </h1>
           <p
             class="hover:underline hover:underline-offset-4 hover:cursor-pointer"
-            @click="router.push(`/artist/${row.Album.Artist.artistId}`)"
+            @click="router.push(`/artist/${row.Album.Artist.id}`)"
           >
             {{ row.Album.Artist.name }}
           </p>

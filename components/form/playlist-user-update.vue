@@ -17,9 +17,9 @@ const emit = defineEmits(["closeModal", "isRefetch"]);
 ///update user or playlist state
 const state = reactive({
   name: data.name,
-  email: data.email,
+  email: data.email || "wawa@gmail.com.jpg",
   image: data.image,
-  imageName: data.imageName,
+  imageName: data.imageName || "playlist-wawa@gmail.com.jpg",
   description: data?.description || "",
 });
 
@@ -32,7 +32,7 @@ const schema = z.object({
     .min(3, { message: "name must be at least 3 character" })
     .nonempty(),
   email: z.string().email(),
-  image: z.string().url(),
+  image: z.nullable(z.string().url()),
   imageName: z.string(),
   description: z.nullable(z.string()),
 });
@@ -78,8 +78,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         method: "patch",
         body: {
           name: event.data.name,
-          image: event.data.image,
-          imageName: event.data.imageName,
+          image: runtimeConfig.public.bucketUrl + newImage,
+          imageName: newImage,
           description: event.data.description,
         },
       });

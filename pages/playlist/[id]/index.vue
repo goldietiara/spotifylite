@@ -1,7 +1,6 @@
 <script setup>
 import { useAuthStore } from "~/stores/auth";
 import { usePlaylistStore } from "~/stores/playlist";
-const route = useRoute();
 
 ///get logged in user
 const authStore = useAuthStore();
@@ -17,7 +16,6 @@ const isOpen = ref(false);
 
 ///search functionality
 const q = ref("");
-
 const searchIcon = ref(false);
 
 const filteredRows = computed(() => {

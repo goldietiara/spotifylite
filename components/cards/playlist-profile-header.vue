@@ -16,7 +16,7 @@ const go = (id) => {
     to be v-if="data" 
     -->
     <div
-      v-if="data.image"
+      v-if="data"
       :style="{
         backgroundImage: `url(${data.image})`,
       }"
@@ -45,12 +45,12 @@ const go = (id) => {
             : "Album"
         }}
       </p>
-      <h1 v-if="data.name" class="text-6xl font-bold">
+      <h1 v-if="data" class="text-6xl font-bold">
         {{ data.name }}
       </h1>
       <USkeleton v-else class="h-[50px] w-[200px]" />
       <div v-show="type === 'playlist'">
-        <p v-if="data.description" class="text-gray-200">
+        <p v-if="data" class="text-gray-200">
           {{ data.description }}
         </p>
         <USkeleton v-else class="w-[150px] h-[30px]" />
@@ -59,7 +59,7 @@ const go = (id) => {
       <div class="flex items-center gap-1">
         <div v-show="type !== 'user'">
           <div
-            v-if="type !== 'user' && owner.image"
+            v-if="type !== 'user' && owner"
             :style="{
               backgroundImage: `url(${owner.image})`,
             }"
@@ -70,7 +70,7 @@ const go = (id) => {
         </div>
 
         <p
-          v-if="type === 'user' ? data.playlist : owner.name"
+          v-if="type === 'user' ? data : owner"
           :class="
             type !== 'user' &&
             'font-semibold hover:underline hover:underline-offset-4 hover:cursor-pointer'
@@ -96,7 +96,7 @@ const go = (id) => {
         >
         <UIcon name="i-ph-dot-outline-fill" />
         <p
-          v-if="type === 'user'"
+          v-if="data"
           :class="
             type === 'user' &&
             ' hover:underline hover:underline-offset-4 hover:cursor-pointer'

@@ -2,22 +2,26 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
+  const id: string | any = getRouterParam(event, "id");
 
-  const result = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: {
-      //   id: id as any,
-      id: parseInt(id as string),
+      id: id as number,
     },
     include: {
-      playlist: true,
       userProfile: {
         include: {
-          likedSongs: { include: { Album: { include: { Artist: true } } } },
+          likedSongs: {
+            include: { Album: { include: { Artist: true } } },
+          },
+          likedPlaylist: true,
         },
       },
+      playlist: true,
+      followers: true,
+      following: true,
     },
   });
 
-  return result;
+  return user;
 });

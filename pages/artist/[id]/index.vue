@@ -1,34 +1,22 @@
 <script setup>
-const route = useRoute();
+import { useAuthStore } from "~/stores/auth";
+import { useArtistStore } from "~/stores/artist";
 const bgColor = ref("");
-const artistId = ref(route.params.id);
-const client = useSupabaseClient();
 
-const userStore = useUserStore();
-const { artistById } = storeToRefs(userStore);
-const { getArtistById } = userStore;
+///current user store
+const authStore = useAuthStore();
+const { currentUser } = storeToRefs(authStore);
+
+///get current playlist
+
+const artistStore = useArtistStore();
+const { artist, artistAlbum, refetchArtist } = storeToRefs(artistStore);
 
 const isOpen = ref(false);
+const isArtistOpen = ref(false);
+const client = useSupabaseClient();
 
-const getCurrentArtist = async (id) => {
-  try {
-    artistById.value = await getArtistById(id);
-  } catch (error) {
-    console.log(error);
-    throw error; // Re-throw the error to propagate it to the caller
-  }
-};
-
-onBeforeMount(() => {
-  getCurrentArtist(artistId.value);
-});
-
-onMounted(() => {
-  watch(artistById, () => {
-    getImageColor(artistById.value?.image);
-  });
-});
-
+///get background color
 const getImageColor = async (image) => {
   try {
     const color = await getColorFromImage(image);
@@ -38,13 +26,17 @@ const getImageColor = async (image) => {
     console.error(error.message);
   }
 };
+
+watchEffect(async () => {
+  await getImageColor(currentUser.value.image);
+});
 </script>
 
 <template>
-  <!-- <main
+  <main
     class="relative w-full h-full overflow-y-auto bg-contain"
     :style="{
-      backgroundImage: `url(${artistById.header})`,
+      backgroundImage: `url(${artist.header})`,
     }"
   >
     <section>
@@ -58,7 +50,7 @@ const getImageColor = async (image) => {
           />
           <p>Verified Artist</p>
         </div>
-        <h1 class="text-7xl font-extrabold mb-5">{{ artistById?.name }}</h1>
+        <h1 class="text-7xl font-extrabold mb-5">{{ artist.name }}</h1>
         <p class="text-base">2,506,606 monthly listeners</p>
       </div>
 
@@ -74,41 +66,41 @@ const getImageColor = async (image) => {
           <PlayerDetailFollow
             :type="'artist'"
             @open-modal="isOpen = true"
-            class="mt-4 mb-9"
+            class="mb-5"
           />
 
           <UModal v-model="isOpen">
             <FormCreateArtist
-              :data="artistById"
-              :type="'artist'"
+              :type="'update'"
+              :data="artist"
               :onCloseModal="() => (isOpen = onCloseModal)"
-              :client="client"
+              :onIsRefetch="() => (refetch = true)"
             />
           </UModal>
 
           <div class="flex flex-col gap-10">
             <CardsPlaylistUserCard
-              :data="artistById"
               :type="'album'"
-              :name="'Popular'"
+              :data="artistAlbum"
+              :owner="artist"
+              :name="'Albums'"
             />
 
             <CardsPlaylistUserCard
-              :data="artistById"
-              :userProfile="artistById"
-              :type="'user'"
-              :name="'Following'"
+              :type="'album'"
+              :data="artistAlbum"
+              :owner="artist"
+              :name="`Featuring ${artist.name}`"
             />
             <CardsPlaylistUserCard
-              :data="artistById"
-              :userProfile="artistById"
+              :data="followers"
               :type="'user'"
-              :name="'Followers'"
+              :name="'Fans also like'"
             />
           </div>
           <Footer></Footer>
         </div>
       </div>
     </section>
-  </main> -->
+  </main>
 </template>

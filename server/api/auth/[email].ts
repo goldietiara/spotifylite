@@ -13,8 +13,6 @@ export default defineEventHandler(async (event) => {
         include: {
           likedSongs: {
             include: { Album: { include: { Artist: true } } },
-            take: 10,
-            skip: 0,
           },
           likedPlaylist: true,
         },

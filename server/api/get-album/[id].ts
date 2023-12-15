@@ -8,7 +8,13 @@ export default defineEventHandler(async (event) => {
     where: {
       id: parseInt(id),
     },
-    include: { songs: { orderBy: { id: "asc" } }, Artist: true },
+    include: {
+      songs: {
+        orderBy: { id: "asc" },
+        include: { Album: { include: { Artist: true } } },
+      },
+      Artist: true,
+    },
   });
 
   return result;

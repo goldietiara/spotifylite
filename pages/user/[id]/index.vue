@@ -60,9 +60,8 @@ watchEffect(async () => {
 
           <UModal v-model="isArtistOpen">
             <FormCreateArtist
-              :type="'artist'"
+              :type="'create'"
               :data="currentUser"
-              :client="client"
               :onCloseModal="() => (isArtistOpen = onCloseModal)"
               :onIsRefetch="() => (refetch = true)"
             />

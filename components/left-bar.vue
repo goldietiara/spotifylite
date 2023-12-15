@@ -1,6 +1,9 @@
 <script setup>
 import { useAuthStore } from "~/stores/auth";
 import { usePlaylistStore } from "~/stores/playlist";
+import { useAlbumStore } from "~/stores/album";
+import { useArtistStore } from "~/stores/artist";
+
 import PlaylistSongCard from "./cards/playlist-songs-card.vue";
 
 const route = useRoute();
@@ -29,11 +32,22 @@ const { getCurrentPlaylist } = playlistStore;
 const { playlist, playlistSongs, playlistOwner, refetchPlaylist } =
   storeToRefs(playlistStore);
 
+///album store
+const albumStore = useAlbumStore();
+const { getCurrentAlbum } = albumStore;
+const { album, albumSongs, albumOwner, refetchAlbum } = storeToRefs(albumStore);
+
+///artist store
+const artistStore = useArtistStore();
+const { getCurrentArtist } = artistStore;
+const { artist, artistAlbum, refetchArtist } = storeToRefs(artistStore);
+
 const search = ref("");
 const width = ref(false);
 const load = ref(false);
 
 /// FIX-LATER: playlist not showing the right result, when refreshing page on user page
+/// FIX-LATER: must add validation for the playlist form
 
 /// styling
 function currentPage(currentPath) {
@@ -116,7 +130,7 @@ watchEffect(() => {
 
 /// fetch logged in user
 const getUser = async () => {
-  console.log("clicked");
+  console.log("fetch current user");
   try {
     currentUser.value = await getCurrentUser(
       userSession.value.user_metadata.email
@@ -125,19 +139,43 @@ const getUser = async () => {
     console.log(error);
     throw error;
   }
-  console.log("wawa");
+  console.log("current user fetched");
 };
 
 /// fetch playlist by id
 const getPlaylist = async (id) => {
-  console.log(`fetching: ${route.path}`);
+  console.log(`fetching playlist: ${route.path}`);
   try {
     playlist.value = await getCurrentPlaylist(id);
   } catch (error) {
     console.log(error);
     throw error;
   }
-  console.log(`fetched: ${route.path}`);
+  console.log(`playlist fetched: ${route.path}`);
+};
+
+/// fetch album by id
+const getAlbum = async (id) => {
+  console.log(`fetching album: ${route.path}`);
+  try {
+    album.value = await getCurrentAlbum(id);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+  console.log(`album fetched: ${route.path}`);
+};
+
+/// fetch artist by id
+const getArtist = async (id) => {
+  console.log(`fetching artist: ${route.path}`);
+  try {
+    artist.value = await getCurrentArtist(id);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+  console.log(`artist fetched: ${route.path}`);
 };
 
 // onBeforeMount(async () => {
@@ -170,6 +208,12 @@ watchEffect(async () => {
   console.log(currentUser.value);
   if (route.name === "playlist-id") {
     await getPlaylist(route.params.id);
+  } else if (route.name === "album-id") {
+    await getAlbum(route.params.id);
+  } else if (route.name === "artist-id") {
+    await getArtist(route.params.id);
+  } else if (route.name === "new-release") {
+    await getArtist(currentUser.value.id);
   }
 });
 
@@ -179,10 +223,29 @@ watch(playlist, () => {
   console.log(playlist.value);
 });
 
-///re-fetch after updating playlist
+watch(album, () => {
+  albumOwner.value = album.value.Artist;
+  albumSongs.value = album.value.songs;
+  console.log(album.value);
+});
+
+///re-fetch after updating playlist data
 watch(refetchPlaylist, async () => {
   if (!refetchPlaylist.value) return;
   await getPlaylist(route.params.id);
+  console.log("refetch current user");
+  refetch.value = false;
+});
+
+watch(artist, () => {
+  artistAlbum.value = artist.value.album;
+  console.log(artist.value);
+});
+
+///re-fetch after updating artist data
+watch(refetchArtist, async () => {
+  if (!refetchArtist.value) return;
+  await getArtist(route.params.id);
   console.log("refetch current user");
   refetch.value = false;
 });

@@ -1,10 +1,11 @@
 import { defineStore } from "pinia";
+import type { TArtist } from "~/types";
 
 //current user
 
 export const useArtistStore = defineStore("artist", {
   state: () => ({
-    artist: {},
+    artist: {} as TArtist | any,
     artistAlbum: [],
     refetchArtist: false,
   }),

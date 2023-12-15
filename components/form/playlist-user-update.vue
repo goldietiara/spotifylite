@@ -72,6 +72,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       newImage = data.path;
     }
   }
+
   if (type === "playlist") {
     try {
       await useFetch(`/api/update-playlist/${data.id}`, {

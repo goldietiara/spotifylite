@@ -7,8 +7,7 @@ const bgColor = ref("");
 const authStore = useAuthStore();
 const { currentUser } = storeToRefs(authStore);
 
-///get current playlist
-
+///get artist
 const artistStore = useArtistStore();
 const { artist, artistAlbum, refetchArtist } = storeToRefs(artistStore);
 
@@ -28,7 +27,7 @@ const getImageColor = async (image) => {
 };
 
 watchEffect(async () => {
-  await getImageColor(currentUser.value.image);
+  await getImageColor(artist.value.header);
 });
 </script>
 

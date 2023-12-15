@@ -79,7 +79,7 @@ const go = (id) => {
         >
           {{
             type === "user"
-              ? `Public Playlist ${data.playlist.length}`
+              ? `Public Playlist ${data.playlist ? data.playlist.length : 0}`
               : owner.name
           }}
         </p>

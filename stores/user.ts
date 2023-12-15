@@ -4,21 +4,21 @@ import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
-    user: {},
-    profile: {},
-    userPlaylist: [],
-    userFollowing: [],
-    userFollowers: [],
-    refetchUser: false,
+    userById: {},
+    userByIdProfile: {},
+    userByIdPlaylist: [],
+    userByIdFollowing: [],
+    userByIdFollowers: [],
+    refetchUserById: false,
   }),
 
   actions: {
-    async getCurrentUser(email: any) {
+    async getCurrentUserById(id: any) {
       try {
-        const result = await useFetch(`/api/get-user/${email}`);
+        const result = await useFetch(`/api/get-user/${id}`);
         console.log(result.data.value); //to check if it's populated
-        this.user = result.data;
-        return this.user;
+        this.userById = result.data;
+        return this.userById;
       } catch (error) {
         console.log(`user not found: ${error}`);
       }

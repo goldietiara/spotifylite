@@ -3,12 +3,17 @@ import { z } from "zod";
 import type { FormSubmitEvent } from "#ui/types";
 
 const router = useRouter();
+
 const { filteredRows, likedSongs, type, userId } = defineProps([
   "filteredRows",
   "likedSongs",
   "type",
   "userId",
 ]);
+const emit = defineEmits(["isRefetch"]);
+const load = ref(false);
+
+watchEffect(() => console.log(userId));
 
 const columns = [
   {
@@ -33,6 +38,7 @@ const columns = [
 ];
 
 async function likingSong(id: number, userId: number) {
+  load.value = true;
   console.log(id);
   console.log(userId);
 
@@ -45,19 +51,22 @@ async function likingSong(id: number, userId: number) {
       },
     });
 
-    return result;
     // isLoading.value = false
   } catch (error) {
     console.log(`error updating user: ${error}`);
     // isLoading.value = false
   }
+  emit("isRefetch", true);
+  load.value = false;
 }
+
 async function UnLike(id: number, userId: number) {
+  load.value = true;
   console.log(id);
   console.log(userId);
 
   try {
-    const result = await useFetch(`/api/unlike-song/`, {
+    await useFetch(`/api/unlike-song/`, {
       method: "patch",
       body: {
         songId: id,
@@ -65,12 +74,13 @@ async function UnLike(id: number, userId: number) {
       },
     });
 
-    return result;
     // isLoading.value = false
   } catch (error) {
     console.log(`error updating user: ${error}`);
     // isLoading.value = false
   }
+  emit("isRefetch", true);
+  load.value = false;
 }
 
 const items = [

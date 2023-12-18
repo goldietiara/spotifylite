@@ -9,7 +9,13 @@ const emit = defineEmits(["openModal", "openArtistModal"]);
 const items = [
   [
     {
-      label: "Edit profile",
+      label: `Edit ${
+        type === "playlist"
+          ? "Playlist"
+          : type === "album"
+          ? "Album"
+          : "Profile"
+      }`,
       icon: "i-heroicons-pencil-square-20-solid",
       click: () => {
         emit("openModal", true);

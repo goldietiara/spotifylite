@@ -1,7 +1,10 @@
 <script setup>
 import { useAuthStore } from "~/stores/auth";
 import { useArtistStore } from "~/stores/artist";
-const bgColor = ref("");
+
+///current user store
+const store = useStore();
+const { allArtist, allAlbum } = storeToRefs(store);
 
 ///current user store
 const authStore = useAuthStore();
@@ -11,6 +14,7 @@ const { currentUser } = storeToRefs(authStore);
 const artistStore = useArtistStore();
 const { artist, artistAlbum, refetchArtist } = storeToRefs(artistStore);
 
+const bgColor = ref("");
 const isOpen = ref(false);
 const isArtistOpen = ref(false);
 const client = useSupabaseClient();
@@ -80,19 +84,19 @@ watchEffect(async () => {
           <div class="flex flex-col gap-10">
             <CardsPlaylistUserCard
               :type="'album'"
-              :data="artistAlbum"
+              :data="artistAlbum.slice(0, 5)"
               :owner="artist"
               :name="'Albums'"
             />
 
             <CardsPlaylistUserCard
               :type="'album'"
-              :data="artistAlbum"
-              :owner="artist"
-              :name="`Featuring ${artist.name}`"
+              :data="allAlbum.slice(0, 5)"
+              :owner="allAlbum"
+              :name="`${artist.name} Listen to`"
             />
             <CardsPlaylistUserCard
-              :data="followers"
+              :data="allArtist.slice(0, 5)"
               :type="'user'"
               :name="'Fans also like'"
             />

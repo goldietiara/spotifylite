@@ -42,7 +42,7 @@ export default defineAppConfig({
       wrapper: "w-full",
       rounded: "rounded-sm",
       padding: {
-        xl: "px-3.5 py-4",
+        xl: "px-6 py-4",
       },
       color: {
         white: {
@@ -51,7 +51,7 @@ export default defineAppConfig({
         },
         gray: {
           outline:
-            "shadow-sm bg-white/10 dark:bg-white/10 text-white dark:text-gray-400 placeholder-white dark:placeholder-gray-400 ring-0 ring-inset ring-transparent dark:ring-transparent focus:ring-0 focus:ring-transparent dark:focus:ring-transparent",
+            "shadow-sm bg-white/10 dark:bg-white/10 text-text-gray-400 dark:text-gray-400 placeholder-white dark:placeholder-gray-400 ring-0 ring-inset ring-transparent dark:ring-transparent focus:ring-0 focus:ring-transparent dark:focus:ring-transparent",
         },
       },
     },

@@ -1,58 +1,65 @@
 <script setup>
-const userSession = useSupabaseUser();
-definePageMeta({
-  title: "Spotify - Web Player by Goldie",
+import { useStore } from "~/stores/store";
+import { useAuthStore } from "~/stores/auth";
+
+const store = useStore();
+const { allUser, allPlaylist, allArtist, allAlbum } = storeToRefs(store);
+
+const authStore = useAuthStore();
+const { currentUser } = storeToRefs(authStore);
+
+const bgColor = ref("");
+
+const getImageColor = async (image) => {
+  try {
+    const color = await getColorFromImage(image);
+    bgColor.value = color;
+    console.log(bgColor.value);
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
+watchEffect(async () => {
+  await getImageColor(currentUser.value.image);
 });
-// const authStore = useAuthStore();
-
-// const { getCurrentUser } = authStore;
-// const { currentUser } = storeToRefs(authStore);
-
-// definePageMeta({
-//   title: "Spotify - Web Player by Goldie",
-// });
-
-// watchEffect(() => {
-//   if (!userSession.value) {
-//     return navigateTo("/login");
-//   }
-// });
-
-// const getUser = async () => {
-//   console.log("clicked");
-//   try {
-//     currentUser.value = await getCurrentUser(
-//       userSession.value.user_metadata.email
-//     );
-//   } catch (error) {
-//     console.log(error);
-//     throw error;
-//   }
-//   console.log("wawa");
-// };
-
-// onBeforeMount(async () => {
-//   await getUser();
-// });
 </script>
-
 <template>
-  <div class="w-full h-full">
-    <div class="flex flex-col gap-3 mt-40 items-center justify-center">
-      <img
-        :src="userSession.user_metadata.avatar_url"
-        alt=""
-        class="rounded-full w-[100px] h-[100px]"
-      />
-      <p>provider: {{ userSession.app_metadata.provider }}</p>
-      <p>name: {{ userSession.user_metadata.name }}</p>
-      <p>email: {{ userSession.email }}</p>
-    </div>
+  <main class="relative w-full h-full overflow-y-auto">
+    <div
+      class="h-screen w-full absolute top-0 z-0"
+      :style="{
+        background: `linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 10%, ${bgColor} 100%)`,
+      }"
+    ></div>
 
-    <div class="flex"></div>
+    <section class="z-20 pt-20 py-3 px-6 flex flex-col gap-10">
+      <div class="flex flex-col gap-10">
+        <CardsPlaylistUserCard
+          :type="'playlist'"
+          :data="allAlbum.slice(0, 5)"
+          :owner="allAlbum"
+          :name="'Popular Album'"
+        />
+        <CardsPlaylistUserCard
+          :type="'playlist'"
+          :data="allPlaylist.slice(0, 5)"
+          :owner="allPlaylist"
+          :name="'Playlist'"
+        />
 
-    <p class="mt-10 mx-3 text-gray-400">
-      {{ userSession }}
-    </p>
-  </div>
+        <CardsPlaylistUserCard
+          :type="'user'"
+          :data="allArtist.slice(0, 5)"
+          :name="'Artist You Might Like'"
+        />
+        <CardsPlaylistUserCard
+          :type="'user'"
+          :data="allUser.slice(0, 5)"
+          :name="'Lets Connect With Others'"
+        />
+      </div>
+    </section>
+    <Footer></Footer>
+  </main>
 </template>

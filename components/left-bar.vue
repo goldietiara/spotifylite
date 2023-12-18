@@ -3,6 +3,7 @@ import { useAuthStore } from "~/stores/auth";
 import { usePlaylistStore } from "~/stores/playlist";
 import { useAlbumStore } from "~/stores/album";
 import { useArtistStore } from "~/stores/artist";
+import { useStore } from "~/stores/store";
 
 import PlaylistSongCard from "./cards/playlist-songs-card.vue";
 
@@ -10,6 +11,11 @@ const route = useRoute();
 
 const runtimeConfig = useRuntimeConfig();
 const userSession = useSupabaseUser();
+
+///all store
+const store = useStore();
+const { getAllUser, getAllPlaylist, getAllArtist, getAllAlbum } = store;
+const { allUser, allPlaylist, allArtist, allAlbum } = storeToRefs(store);
 
 ///current user store
 const authStore = useAuthStore();
@@ -154,6 +160,21 @@ const getUser = async () => {
   console.log("current user fetched");
 };
 
+/// fetch all user, playlist, user, album
+const getAll = async () => {
+  console.log("fetch current user");
+  try {
+    allAlbum.value = await getAllAlbum();
+    allPlaylist.value = await getAllPlaylist();
+    allArtist.value = await getAllArtist();
+    allUser.value = await getAllUser();
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+  console.log("current user fetched");
+};
+
 /// fetch playlist by id
 const getPlaylist = async (id) => {
   console.log(`fetching playlist: ${route.path}`);
@@ -230,6 +251,7 @@ watch(currentUser, () => {
 
 watchEffect(async () => {
   console.log(currentUser.value);
+  console.log(route.name);
   if (route.name === "playlist-id") {
     await getPlaylist(route.params.id);
   } else if (route.name === "album-id") {
@@ -240,6 +262,10 @@ watchEffect(async () => {
     await getUserById(route.params.id);
   } else if (route.name === "new-release") {
     await getArtist(currentUser.value.id);
+  } else if (route.name === "search") {
+    await getAll();
+  } else if (route.name === "index") {
+    await getAll();
   }
 });
 
@@ -390,8 +416,8 @@ watch(refetchUserById, async () => {
           @click="search = ''"
         />
       </div>
-      <div v-if="currentUser.playlist">
-        <div v-if="data.length > 0">
+      <div v-if="currentUser.playlist && data.length">
+        <div v-show="data.length > 0">
           <nuxt-link
             to="/liked-songs"
             class="py-2 px-3 flex gap-3 items-center text-white/90 ease-in-out transition-all duration-150 rounded-md hover:bg-zinc-50/5 hover:cursor-pointer"
@@ -423,7 +449,7 @@ watch(refetchUserById, async () => {
           />
         </div>
         <div
-          v-else
+          v-show="!data.length && search"
           class="px-3 flex flex-col justify-center gap-3 text-center max-w-fit min-w-0 h-full"
         >
           <h1

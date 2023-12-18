@@ -21,6 +21,7 @@ const go = (id) => {
     <div class="flex justify-between">
       <h1 class="text-xl font-bold text-gray-200">{{ name }}</h1>
       <p
+        v-show="data.length > 4"
         class="text-gray-200 text-sm cursor-pointer underline-offset-2 hover:underline"
       >
         show all

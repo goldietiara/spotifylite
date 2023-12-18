@@ -101,7 +101,7 @@ watchEffect(async () => {
             :type="'playlist'"
             :data="albums.slice(0, 5)"
             :owner="albums"
-            :name="'Popular Album'"
+            :name="'Album'"
           />
           <CardsPlaylistUserCard
             v-show="playlists.length"
@@ -115,13 +115,13 @@ watchEffect(async () => {
             v-show="artists.length"
             :type="'user'"
             :data="artists.slice(0, 5)"
-            :name="'Artist You Might Like'"
+            :name="'Artist'"
           />
           <CardsPlaylistUserCard
             v-show="users.length"
             :type="'user'"
             :data="users.slice(0, 5)"
-            :name="'Lets Connect With Others'"
+            :name="'Profile'"
           />
         </div>
         <div

@@ -30,6 +30,7 @@ const {
   followers,
   userIsArtist,
   refetch,
+  pending,
 } = storeToRefs(authStore);
 
 ///user store
@@ -163,6 +164,7 @@ const getUser = async () => {
     console.log(error);
     throw error;
   }
+  pending.value = false;
   console.log("current user fetched");
 };
 

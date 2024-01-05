@@ -5,17 +5,26 @@ import type { TPlaylist } from "~/types";
 
 const router = useRouter();
 
-const { filteredRows, likedSongs, type, userId, playlistId, userPlaylist } =
-  defineProps([
-    "filteredRows",
-    "likedSongs",
-    "type",
-    "userId",
-    "playlistId",
-    "userPlaylist",
-  ]);
-const emit = defineEmits(["isRefetch"]);
-const load = ref(false);
+const {
+  filteredRows,
+  likedSongs,
+  type,
+  userId,
+  playlistId,
+  userPlaylist,
+  pending,
+} = defineProps([
+  "filteredRows",
+  "likedSongs",
+  "type",
+  "userId",
+  "playlistId",
+  "userPlaylist",
+  "pending",
+]);
+const emit = defineEmits(["isRefetch", "isPending"]);
+// const load = ref(false);
+const loadId = ref(0);
 const currentPlaylistId = ref(0);
 watchEffect(() => console.log(userId));
 watchEffect(() => {
@@ -45,7 +54,8 @@ const columns = [
 ];
 
 async function likingSong(id: number, userId: number) {
-  load.value = true;
+  loadId.value = id;
+  emit("isPending", true);
   console.log(id);
   console.log(userId);
 
@@ -64,11 +74,11 @@ async function likingSong(id: number, userId: number) {
     // isLoading.value = false
   }
   emit("isRefetch", true);
-  load.value = false;
 }
 
 async function UnLike(id: number, userId: number) {
-  load.value = true;
+  loadId.value = id;
+  emit("isPending", true);
   console.log(id);
   console.log(userId);
 
@@ -87,11 +97,9 @@ async function UnLike(id: number, userId: number) {
     // isLoading.value = false
   }
   emit("isRefetch", true);
-  load.value = false;
 }
 
 async function addToPlaylist(id: number, playlistId: number) {
-  load.value = true;
   console.log(id);
   console.log(userId);
 
@@ -110,11 +118,9 @@ async function addToPlaylist(id: number, playlistId: number) {
     // isLoading.value = false
   }
   emit("isRefetch", true);
-  load.value = false;
 }
 
 async function removeFromPlaylist(id: number, playlistId: number) {
-  load.value = true;
   console.log(id);
   console.log(userId);
 
@@ -133,7 +139,6 @@ async function removeFromPlaylist(id: number, playlistId: number) {
     // isLoading.value = false
   }
   emit("isRefetch", true);
-  load.value = false;
 }
 
 const dropdownItems = [
@@ -142,14 +147,14 @@ const dropdownItems = [
       label: "Add to playlist",
       icon: "i-ph-plus",
       slot: "adding",
-      class: `${type === "playlist" ? "hidden" : ""}`,
+      class: `${type === "playlist" ? "hidden" : ""} grid`,
       ///FIX LATER: will add validation, this option will be hidden only on user own playlist
     },
     {
       label: "Remove from this playlist",
       icon: "i-ph-trash-simple",
       slot: "remove",
-      class: `${type !== "playlist" ? "hidden" : ""}`,
+      class: `${type !== "playlist" ? "hidden" : ""} grid`,
     },
   ],
 ];
@@ -225,17 +230,25 @@ const playlist = [
           "
         >
           <UIcon
-            @click="UnLike(row.id, userId)"
-            class="text-xl bg-green-400 hover:bg-green-300 hover:cursor-pointer hover:scale-110"
-            name="i-ph-heart-fill"
-            v-if="likedSongs(row.id)"
+            v-if="pending && loadId === row.id"
+            class="bg-green-500 animate-spin text-xl"
+            name="i-ph-circle-notch-bold"
           />
-          <UIcon
-            @click="likingSong(row.id, userId)"
-            class="text-xl opacity-0 hover:cursor-pointer group-hover:opacity-100 hover:bg-gray-200 hover:scale-110 transition-all duration-100 ease-in-out"
-            name="i-ph-heart"
-            v-else
-          />
+          <div v-else>
+            <UIcon
+              v-if="likedSongs(row.id)"
+              @click="UnLike(row.id, userId)"
+              class="text-xl bg-green-400 hover:bg-green-300 hover:cursor-pointer hover:scale-110"
+              name="i-ph-heart-fill"
+            />
+
+            <UIcon
+              v-else
+              @click="likingSong(row.id, userId)"
+              class="text-xl opacity-0 hover:cursor-pointer group-hover:opacity-100 hover:bg-gray-200 hover:scale-110 transition-all duration-100 ease-in-out"
+              name="i-ph-heart"
+            />
+          </div>
         </UTooltip>
 
         <UDropdown :items="dropdownItems" :popper="{ placement: 'auto' }">
@@ -254,15 +267,17 @@ const playlist = [
               :items="playlist"
               :popper="{ placement: 'auto' }"
             >
-              <template #item="{ item }">
-                <p @click="addToPlaylist(row.id, item.id)">
-                  {{ item.label }} {{ row.id }}
-                </p>
-              </template>
-
               <p class="flex gap-3 items-center w-full">
                 <UIcon :name="item.icon" /> {{ item.label }}
               </p>
+              <template #item="{ item }">
+                <p
+                  class="text-left w-full"
+                  @click="addToPlaylist(row.id, item.id)"
+                >
+                  {{ item.label }}
+                </p>
+              </template>
             </UDropdown>
           </template>
         </UDropdown>

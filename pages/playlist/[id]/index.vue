@@ -5,7 +5,7 @@ const route = useRoute();
 
 ///get logged in user
 const authStore = useAuthStore();
-const { currentUser, likedSongs, userProfile, userPlaylist, refetch } =
+const { currentUser, likedSongs, userProfile, userPlaylist, refetch, pending } =
   storeToRefs(authStore);
 ///get current playlist
 const playlistStore = usePlaylistStore();
@@ -130,7 +130,9 @@ watchEffect(async () => {
             :filteredRows="filteredRows"
             :userId="userProfile.id"
             :userPlaylist="userPlaylist"
-            :playlistId="route.name === 'playlist-id' ? playlist : 0"
+            :playlistId="route.params.id"
+            :pending="pending"
+            :onIsPending="() => (pending = true)"
             :onIsRefetch="() => (refetch = true)"
           />
         </div>

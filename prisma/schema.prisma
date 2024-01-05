@@ -32,59 +32,55 @@ model userProfile {
   id            Int        @id @default(autoincrement())
   likedSongs    Song[]
   likedPlaylist Playlist[]
+  likedAlbum    Album[]
   userId        Int        @unique
   User          User       @relation(fields: [userId], references: [id])
-  Artist        Artist?    @relation(fields: [artistId], references: [id])
-  artistId      Int?
 }
 
 model Playlist {
-  id            Int          @id @default(autoincrement())
-  userId        Int          @unique
-  name          String
-  description   String
-  image         String
-  imageName     String
-  createdAt     DateTime     @default(now())
-  songs         Song[]
-  likes         User[]
-  userProfileId Int?
-  userProfile   userProfile? @relation(fields: [userProfileId], references: [id])
+  id          Int           @id @default(autoincrement())
+  userId      Int
+  author      User          @relation(fields: [userId], references: [id])
+  name        String
+  description String
+  image       String
+  imageName   String
+  createdAt   DateTime      @default(now())
+  songs       Song[]
+  likes       userProfile[]
 }
 
 model Artist {
-  id         Int           @id @default(autoincrement())
-  email      String        @unique
+  id         Int     @id @default(autoincrement())
+  email      String  @unique
   name       String
   image      String
   imageName  String
   header     String
   headerName String
   album      Album[]
-  followers  userProfile[]
-  userId     Int           @unique
+  userId     Int     @unique
 }
 
 model Song {
-  id            Int          @id @default(autoincrement())
-  artistId      Int
-  name          String
-  playlistId    Int?
-  Playlist      Playlist?    @relation(fields: [playlistId], references: [id])
-  albumId       Int?
-  Album         Album?       @relation(fields: [albumId], references: [id], onDelete: Cascade)
-  userProfileId Int?
-  userProfile   userProfile? @relation(fields: [userProfileId], references: [id])
+  id       Int           @id @default(autoincrement())
+  artistId Int
+  name     String
+  Playlist Playlist[]
+  albumId  Int?
+  Album    Album?        @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  likes    userProfile[]
 }
 
 model Album {
-  id        Int      @id @default(autoincrement())
+  id        Int           @id @default(autoincrement())
   name      String
   image     String
   imageName String
   genre     String
-  createdAt DateTime @default(now())
+  createdAt DateTime      @default(now())
   songs     Song[]
   artistId  Int?
-  Artist    Artist?  @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  Artist    Artist?       @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  likes     userProfile[]
 }

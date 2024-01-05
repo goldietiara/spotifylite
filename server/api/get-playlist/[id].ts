@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
       id: parseInt(id),
     },
     include: {
-      userProfile: { include: { User: true } },
+      author: true,
       songs: { include: { Album: { include: { Artist: true } } } },
     },
   });

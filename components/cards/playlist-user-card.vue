@@ -7,12 +7,14 @@ const { data, type, name, owner } = defineProps([
   "owner",
 ]);
 
-const go = (id) => {
+const go = (id, userId) => {
   if (type === "playlist") {
     router.push(`/playlist/${id}`);
-  } else if (type === "user") {
+  } else if (type === "album") {
+    router.push(`/album/${id}`);
+  } else if (type === "user" && !userId) {
     router.push(`/user/${id}`);
-  } else router.push(`/album/${id}`);
+  } else if (type === "user" && userId) router.push(`/artist/${id}`);
 };
 </script>
 
@@ -33,7 +35,7 @@ const go = (id) => {
         class="w-[190px] h-[270px] rounded-lg overflow-clip bg-zinc-900 group cursor-pointer"
         v-for="(value, index) in data"
         :key="index"
-        @click="go(value.id)"
+        @click="go(value.id, value.userId)"
       >
         <div
           class="w-full h-full flex flex-col gap-3 items-center p-4 bg-white/5 group-hover:bg-white/10 transition-all ease-out duration-150"
@@ -94,9 +96,9 @@ const go = (id) => {
                         ? owner.name
                         : value.Artist
                         ? value.Artist.name
-                        : value.userProfile.User.name
+                        : value.author.name
                     }`
-                  : value.Artist
+                  : value.userId
                   ? "Artist"
                   : "Profile"
               }}

@@ -2,7 +2,7 @@
 import Table from "../../../components/table.vue";
 
 const authStore = useAuthStore();
-const { currentUser, likedSongs, userProfile, refetch } =
+const { currentUser, likedSongs, userProfile, userPlaylist, refetch } =
   storeToRefs(authStore);
 
 /// FIX LATER: refetch data when unlike songs
@@ -122,6 +122,7 @@ watchEffect(() => {
             :likedSongs="isLiked"
             :filteredRows="filteredRows"
             :userId="userProfile.id"
+            :userPlaylist="userPlaylist"
             :onIsRefetch="() => (refetch = true)"
           />
         </div>

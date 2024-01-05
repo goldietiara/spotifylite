@@ -1,11 +1,12 @@
 <script setup>
 import { useAuthStore } from "~/stores/auth";
 import { usePlaylistStore } from "~/stores/playlist";
+const route = useRoute();
 
 ///get logged in user
 const authStore = useAuthStore();
-const { currentUser, likedSongs } = storeToRefs(authStore);
-
+const { currentUser, likedSongs, userProfile, userPlaylist, refetch } =
+  storeToRefs(authStore);
 ///get current playlist
 const playlistStore = usePlaylistStore();
 const { playlist, playlistSongs, playlistOwner, refetchPlaylist } =
@@ -127,7 +128,10 @@ watchEffect(async () => {
             :type="'playlist'"
             :likedSongs="isLiked"
             :filteredRows="filteredRows"
-            :userId="currentUser.userProfileId"
+            :userId="userProfile.id"
+            :userPlaylist="userPlaylist"
+            :playlistId="route.name === 'playlist-id' ? playlist : 0"
+            :onIsRefetch="() => (refetch = true)"
           />
         </div>
       </div>

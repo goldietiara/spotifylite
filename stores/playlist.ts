@@ -14,7 +14,7 @@ export const usePlaylistStore = defineStore("playlist", {
     async getCurrentPlaylist(id: number) {
       try {
         const result = await useFetch(`/api/get-playlist/${id}`);
-        console.log(result.data.value); //to check if it's populated
+        // console.log(result.data.value); //to check if it's populated
         this.playlist = result.data;
         console.log(this.playlist); //to check if it's populated
         return this.playlist;

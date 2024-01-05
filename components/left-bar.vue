@@ -89,23 +89,28 @@ watch(search, () => {
 
 /// create new playlist
 const state = reactive({
-  id: currentUser.value.id,
-  name: `New Playlist #${
-    currentUser.value.playlist ? currentUser.value.playlist.length + 1 : 0
-  }`,
-  description: "New Playlist Description",
-  image: `${runtimeConfig.public.bucketUrl}playlist-${
-    currentUser.value.email
-  }-${
-    currentUser.value.playlist ? currentUser.value.playlist.length + 1 : 0
-  }.jpg`,
-  imageName: `playlist-${currentUser.value.email}-${
-    currentUser.value.playlist && currentUser.value.playlist.length + 1
-  }.jpg`,
+  id: "",
+  name: "",
+  description: "",
+  image: "",
+  imageName: "",
 });
 
 watch(currentUser, () => {
-  console.log(state);
+  (state.id = currentUser.value.id),
+    (state.name = `New Playlist #${
+      currentUser.value.playlist ? currentUser.value.playlist.length + 1 : 0
+    }`),
+    (state.description = "New Playlist Description"),
+    (state.image = `${runtimeConfig.public.bucketUrl}playlist-${
+      currentUser.value.email
+    }-${
+      currentUser.value.playlist ? currentUser.value.playlist.length + 1 : 0
+    }.jpg`),
+    (state.imageName = `playlist-${currentUser.value.email}-${
+      currentUser.value.playlist && currentUser.value.playlist.length + 1
+    }.jpg`),
+    console.log(state);
 });
 
 async function createPlaylist(data) {
@@ -130,6 +135,7 @@ async function createPlaylist(data) {
         playlist: result.data.value?.id,
       },
     });
+    getUser();
     load.value = false;
 
     navigateTo(`/playlist/${result.data.value.id}`);
@@ -179,6 +185,9 @@ const getAll = async () => {
 const getPlaylist = async (id) => {
   console.log(`fetching playlist: ${route.path}`);
   try {
+    currentUser.value = await getCurrentUser(
+      userSession.value.user_metadata.email
+    );
     playlist.value = await getCurrentPlaylist(id);
   } catch (error) {
     console.log(error);
@@ -270,7 +279,7 @@ watchEffect(async () => {
 });
 
 watch(playlist, () => {
-  playlistOwner.value = playlist.value.userProfile.User;
+  playlistOwner.value = playlist.value.author;
   playlistSongs.value = playlist.value.songs;
   console.log(playlist.value);
 });

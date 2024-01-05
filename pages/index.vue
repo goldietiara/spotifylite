@@ -36,14 +36,14 @@ watchEffect(async () => {
     <section class="z-20 pt-20 py-3 px-6 flex flex-col gap-10">
       <div class="flex flex-col gap-10">
         <CardsPlaylistUserCard
-          :type="'playlist'"
+          :type="'album'"
           :data="allAlbum.slice(0, 5)"
           :owner="allAlbum"
           :name="'Popular Album'"
         />
         <CardsPlaylistUserCard
           :type="'playlist'"
-          :data="allPlaylist.slice(0, 5)"
+          :data="allPlaylist"
           :owner="allPlaylist"
           :name="'Playlist'"
         />

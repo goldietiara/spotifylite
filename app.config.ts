@@ -93,5 +93,14 @@ export default defineAppConfig({
     skeleton: {
       background: "bg-zinc-800",
     },
+    dropdown: {
+      background: "bg-zinc-800 dark:bg-zinc-800",
+      ring: "ring-0",
+      item: {
+        active: "bg-white/10 dark:bg-white/10 text-gray-200 dark:text-gray-200",
+        rounded: "rounded-none",
+      },
+      rounded: "rounded-none",
+    },
   },
 });

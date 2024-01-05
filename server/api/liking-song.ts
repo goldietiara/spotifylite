@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   const result = await prisma.song.update({
     where: { id: parseInt(body.songId as string) },
     data: {
-      userProfile: { connect: { id: body.userProfileId } },
+      likes: { connect: { id: body.userProfileId } },
     },
   });
 

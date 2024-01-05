@@ -1,19 +1,26 @@
 <script setup lang="ts">
 import { z } from "zod";
 import type { FormSubmitEvent } from "#ui/types";
+import type { TPlaylist } from "~/types";
 
 const router = useRouter();
 
-const { filteredRows, likedSongs, type, userId } = defineProps([
-  "filteredRows",
-  "likedSongs",
-  "type",
-  "userId",
-]);
+const { filteredRows, likedSongs, type, userId, playlistId, userPlaylist } =
+  defineProps([
+    "filteredRows",
+    "likedSongs",
+    "type",
+    "userId",
+    "playlistId",
+    "userPlaylist",
+  ]);
 const emit = defineEmits(["isRefetch"]);
 const load = ref(false);
-
+const currentPlaylistId = ref(0);
 watchEffect(() => console.log(userId));
+watchEffect(() => {
+  currentPlaylistId.value = playlistId;
+});
 
 const columns = [
   {
@@ -83,30 +90,74 @@ async function UnLike(id: number, userId: number) {
   load.value = false;
 }
 
-const items = [
+async function addToPlaylist(id: number, playlistId: number) {
+  load.value = true;
+  console.log(id);
+  console.log(userId);
+
+  try {
+    await useFetch(`/api/update-playlist-add-song`, {
+      method: "patch",
+      body: {
+        songId: id,
+        playlistId: playlistId,
+      },
+    });
+
+    // isLoading.value = false
+  } catch (error) {
+    console.log(`error updating user: ${error}`);
+    // isLoading.value = false
+  }
+  emit("isRefetch", true);
+  load.value = false;
+}
+
+async function removeFromPlaylist(id: number, playlistId: number) {
+  load.value = true;
+  console.log(id);
+  console.log(userId);
+
+  try {
+    await useFetch(`/api/update-playlist-remove-song`, {
+      method: "patch",
+      body: {
+        songId: id,
+        playlistId: playlistId,
+      },
+    });
+
+    // isLoading.value = false
+  } catch (error) {
+    console.log(`error updating user: ${error}`);
+    // isLoading.value = false
+  }
+  emit("isRefetch", true);
+  load.value = false;
+}
+
+const dropdownItems = [
   [
     {
       label: "Add to playlist",
       icon: "i-ph-plus",
+      slot: "adding",
+      class: `${type === "playlist" ? "hidden" : ""}`,
+      ///FIX LATER: will add validation, this option will be hidden only on user own playlist
+    },
+    {
+      label: "Remove from this playlist",
+      icon: "i-ph-trash-simple",
+      slot: "remove",
+      class: `${type !== "playlist" ? "hidden" : ""}`,
     },
   ],
 ];
 
-const addToPlaylist = [
-  [
-    {
-      label: "Add to playlist",
-      icon: "i-ph-plus",
-    },
-    {
-      label: "Add to playlist",
-      icon: "i-ph-plus",
-    },
-    {
-      label: "Add to playlist",
-      icon: "i-ph-plus",
-    },
-  ],
+const playlist = [
+  userPlaylist.map((v: { name: string; id: number }) => {
+    return { label: v.name, id: v.id };
+  }),
 ];
 </script>
 
@@ -187,22 +238,33 @@ const addToPlaylist = [
           />
         </UTooltip>
 
-        <UDropdown
-          v-show="type !== 'liked playlist'"
-          :items="items"
-          :popper="{ placement: 'bottom-start' }"
-          :ui="{
-            background: 'bg-zinc-800 dark:bg-zinc-800',
-            item: {
-              active:
-                'bg-zinc-700 dark:bg-zinc-700 text-gray-200 dark:text-gray-200',
-            },
-          }"
-        >
+        <UDropdown :items="dropdownItems" :popper="{ placement: 'auto' }">
           <UIcon
             name="i-majesticons-more-menu"
-            class="text-4xl bg-gray-400 hover:scale-110 hover:bg-gray-200 transition-all ease-out duration-150 z-20"
+            class="text-4xl bg-gray-400 hover:scale-110 hover:bg-gray-200 transition-all ease-out duration-150"
           />
+          <template #remove="{ item }">
+            <p @click="removeFromPlaylist(row.id, currentPlaylistId)">
+              {{ item.label }} {{ row.id }}
+            </p>
+          </template>
+          <template #adding="{ item }">
+            <UDropdown
+              mode="hover"
+              :items="playlist"
+              :popper="{ placement: 'auto' }"
+            >
+              <template #item="{ item }">
+                <p @click="addToPlaylist(row.id, item.id)">
+                  {{ item.label }} {{ row.id }}
+                </p>
+              </template>
+
+              <p class="flex gap-3 items-center w-full">
+                <UIcon :name="item.icon" /> {{ item.label }}
+              </p>
+            </UDropdown>
+          </template>
         </UDropdown>
       </div>
     </template>

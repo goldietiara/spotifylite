@@ -17,9 +17,13 @@ const emit = defineEmits(["closeModal", "isRefetch"]);
 ///update user or playlist state
 const state = reactive({
   name: data.name,
-  email: data.email || "wawa@gmail.com.jpg",
-  image: data.image,
-  imageName: data.imageName || "playlist-wawa@gmail.com.jpg",
+  email: data.author.email,
+  image: data.image || "wawa",
+  imageName:
+    data.imageName ||
+    `${type === "user" ? "user" : "playlist"}-${
+      type === "user" ? data.id : data.author.id + "-" + data.id
+    }-${type === "user" ? data.image : data.author.email}.jpg`,
   description: data?.description || "",
 });
 

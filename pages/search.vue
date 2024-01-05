@@ -127,10 +127,10 @@ watchEffect(async () => {
         <div
           v-show="
             search &&
-            (!users.length ||
-              !playlists.length ||
-              !artists.length ||
-              !albums.length)
+            !users.length &&
+            !playlists.length &&
+            !artists.length &&
+            !albums.length
           "
           class="mx-5 py-10 flex flex-col gap-5 items-center text-center"
         >

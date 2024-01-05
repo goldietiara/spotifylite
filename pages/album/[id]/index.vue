@@ -4,8 +4,8 @@ import { useAlbumStore } from "~/stores/album";
 
 ///get logged in user
 const authStore = useAuthStore();
-const { currentUser, likedSongs } = storeToRefs(authStore);
-
+const { currentUser, likedSongs, userProfile, userPlaylist, refetch } =
+  storeToRefs(authStore);
 ///get current playlist
 const albumStore = useAlbumStore();
 const { album, albumSongs, albumOwner, refetchAlbum } = storeToRefs(albumStore);
@@ -114,7 +114,9 @@ watchEffect(async () => {
             :type="'album'"
             :likedSongs="isLiked"
             :filteredRows="filteredRows"
-            :userId="currentUser.userProfileId"
+            :userPlaylist="userPlaylist"
+            :userId="userProfile.id"
+            :onIsRefetch="() => (refetch = true)"
           />
         </div>
       </div>

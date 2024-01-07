@@ -256,8 +256,8 @@ watch(currentUser, () => {
 
   likedSongs.value = userProfile.value.likedSongs;
   likedPlaylist.value = userProfile.value.likedPlaylist;
-  following.value = userProfile.value.followers;
-  followers.value = userProfile.value.following;
+  following.value = currentUser.value.following;
+  followers.value = currentUser.value.followers;
 });
 
 watchEffect(async () => {

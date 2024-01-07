@@ -17,7 +17,7 @@ const emit = defineEmits(["closeModal", "isRefetch"]);
 ///update user or playlist state
 const state = reactive({
   name: data.name,
-  email: data.author.email,
+  email: type === "user" ? data.email : data.author.email,
   image: data.image || "wawa",
   imageName:
     data.imageName ||

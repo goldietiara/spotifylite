@@ -8,7 +8,7 @@ export default defineAppConfig({
         black: {
           ghost: "hover:text-white",
           solid:
-            " shadow-sm text-white dark:text-gray-200 bg-black/70 hover:bg-black disabled:text-gray-400 dark:bg-black/70 dark:hover:bg-black dark:disabled:text-gray-400 disabled:text-gray-400 dark:disabled:bg-black/50 disabled:bg-black/50 focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400",
+            " shadow-sm text-gray-200 dark:text-gray-200 bg-black/70 dark:bg-black/70 hover:bg-black disabled:text-gray-400  dark:hover:bg-black dark:disabled:text-gray-400 disabled:text-gray-400 dark:disabled:bg-black/50 disabled:bg-black/50 focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400",
         },
         white: {
           solid:

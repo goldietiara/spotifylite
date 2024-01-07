@@ -7,7 +7,7 @@ const bgColor = ref("");
 
 ///current user store
 const authStore = useAuthStore();
-const { currentUser } = storeToRefs(authStore);
+const { currentUser, following, refetch, pending } = storeToRefs(authStore);
 
 ///user store
 const userStore = useUserStore();
@@ -22,6 +22,8 @@ const {
 
 const isOpen = ref(false);
 const isArtistOpen = ref(false);
+const route = useRoute();
+const userId = parseInt(route.params.id);
 
 const getImageColor = async (image) => {
   try {
@@ -35,6 +37,14 @@ const getImageColor = async (image) => {
 
 watchEffect(async () => {
   await getImageColor(userById.value.image);
+});
+
+const ifFollowed = computed(() => {
+  if (!following) return;
+  const followed = following.value.find((v) => v.id === userId);
+  if (followed) {
+    return true;
+  } else return false;
 });
 </script>
 
@@ -52,11 +62,17 @@ watchEffect(async () => {
 
       <div class="mt-10 relative">
         <div class="w-full h-[500px] bg-zinc-900/20 absolute top-0 z-0"></div>
-        <div class="py-3 px-6">
+        <div class="pb-3 pt-12 px-6 flex flex-col gap-5">
           <PlayerDetailFollow
             :isArtist="userById.isArtist"
             :artistId="userById.artistId"
             :type="'user'"
+            :authId="parseInt(currentUser.id)"
+            :userId="parseInt(userId)"
+            :isFollowed="ifFollowed"
+            :pending="pending"
+            :onIsPending="() => (pending = true)"
+            :onIsRefetch="() => (refetch = true)"
             @open-modal="isOpen = true"
             @open-artist-modal="isArtistOpen = true"
             class="mb-5"

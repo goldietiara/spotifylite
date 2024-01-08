@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
         include: { Album: { include: { Artist: true } } },
       },
       Artist: true,
+      _count: { select: { likes: true } },
     },
   });
 

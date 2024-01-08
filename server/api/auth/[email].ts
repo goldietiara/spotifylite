@@ -15,11 +15,12 @@ export default defineEventHandler(async (event) => {
             include: { Album: { include: { Artist: true } } },
           },
           likedPlaylist: true,
+          likedAlbum: true,
         },
       },
       playlist: { orderBy: { id: "desc" } },
-      followers: true,
-      following: true,
+      followers: { orderBy: { id: "desc" } },
+      following: { orderBy: { id: "desc" } },
     },
   });
 

@@ -8,6 +8,7 @@ export const useAuthStore = defineStore("auth", {
     userProfile: {},
     userPlaylist: [],
     likedSongs: [],
+    likedAlbum: [],
     likedPlaylist: [],
     following: [],
     followers: [],

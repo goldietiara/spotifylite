@@ -1,17 +1,25 @@
 <script setup>
 import { useAuthStore } from "~/stores/auth";
 import { usePlaylistStore } from "~/stores/playlist";
-const route = useRoute();
 
 ///get logged in user
 const authStore = useAuthStore();
-const { currentUser, likedSongs, userProfile, userPlaylist, refetch, pending } =
-  storeToRefs(authStore);
+const {
+  currentUser,
+  likedSongs,
+  likedPlaylist,
+  userProfile,
+  userPlaylist,
+  refetch,
+  pending,
+} = storeToRefs(authStore);
 ///get current playlist
 const playlistStore = usePlaylistStore();
 const { playlist, playlistSongs, playlistOwner, refetchPlaylist } =
   storeToRefs(playlistStore);
 
+const route = useRoute();
+const playlistId = parseInt(route.params.id);
 const bgColor = ref("");
 const isOpen = ref(false);
 
@@ -53,6 +61,15 @@ watchEffect(async () => {
   await getImageColor(playlist.value.image);
 });
 
+//checked if the playlist is liked by logged user
+const isPlaylistLiked = computed(() => {
+  if (!likedPlaylist) return;
+  const followed = likedPlaylist.value.find((v) => v.id === playlistId);
+  if (followed) {
+    return true;
+  } else return false;
+});
+
 // const isUser = computed(() => {
 //   userById.value.email === userSession.value.user_metadata.email;
 //   if (isUser) {
@@ -84,6 +101,12 @@ watchEffect(async () => {
           <div class="flex px-3 py-3.5 pt-5 justify-between items-center">
             <PlayerDetailFollow
               :type="'playlist'"
+              :authId="parseInt(currentUser.id)"
+              :paramsId="playlistId"
+              :isLiked="isPlaylistLiked"
+              :pending="pending"
+              :onIsPending="() => (pending = true)"
+              :onIsRefetch="() => (refetch = true)"
               @open-modal="isOpen = true"
             />
 

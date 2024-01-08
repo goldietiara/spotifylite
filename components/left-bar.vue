@@ -25,6 +25,7 @@ const {
   currentUser,
   userPlaylist,
   likedSongs,
+  likedAlbum,
   likedPlaylist,
   following,
   followers,
@@ -187,9 +188,6 @@ const getAll = async () => {
 const getPlaylist = async (id) => {
   console.log(`fetching playlist: ${route.path}`);
   try {
-    currentUser.value = await getCurrentUser(
-      userSession.value.user_metadata.email
-    );
     playlist.value = await getCurrentPlaylist(id);
   } catch (error) {
     console.log(error);
@@ -256,6 +254,7 @@ watch(currentUser, () => {
 
   likedSongs.value = userProfile.value.likedSongs;
   likedPlaylist.value = userProfile.value.likedPlaylist;
+  likedAlbum.value = userProfile.value.likedAlbum;
   following.value = currentUser.value.following;
   followers.value = currentUser.value.followers;
 });
@@ -394,12 +393,14 @@ watch(refetchUserById, async () => {
           <UIcon class="text-3xl shrink-0" name="i-ph-cardholder" />
           <span v-show="!width"> Your Library </span>
         </div>
-        <UTooltip text="Create playlist">
-          <UIcon
+        <UTooltip :text="state.id && 'Create playlist'">
+          <UButton
+            icon="i-ph-plus"
             v-show="width === false && load === false"
-            class="text-2xl shrink-0 hover:text-white/90 cursor-pointer"
-            name="i-ph-plus"
+            :disabled="!state.id"
+            class="p-2 transition-all ease-out duration-100 z-20 bg-transparent dark:bg-transparent hover:bg-transparent hover:outline-white dark:hover:bg-transparent focus:scale-100 active:scale-95 text-2xl shrink-0 hover:text-white/90 cursor-pointer"
             @click="createPlaylist(state)"
+            :ui="{ variant: { solid: 'text-white/40' } }"
           />
         </UTooltip>
         <UIcon

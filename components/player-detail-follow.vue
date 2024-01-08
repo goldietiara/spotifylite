@@ -1,14 +1,23 @@
 <script setup>
-const { type, isArtist, artistId, authId, userId, isFollowed, pending } =
-  defineProps([
-    "type",
-    "isArtist",
-    "artistId",
-    "authId",
-    "userId",
-    "isFollowed",
-    "pending",
-  ]);
+const {
+  type,
+  isArtist,
+  artistId,
+  authId,
+  paramsId,
+  isFollowed,
+  isLiked,
+  pending,
+} = defineProps([
+  "type",
+  "isArtist",
+  "artistId",
+  "authId",
+  "paramsId",
+  "isFollowed",
+  "isLiked",
+  "pending",
+]);
 const emit = defineEmits([
   "openModal",
   "openArtistModal",
@@ -17,7 +26,7 @@ const emit = defineEmits([
 ]);
 watchEffect(() => {
   console.log(`auth: ${authId}`);
-  console.log(`user: ${userId}`);
+  console.log(`user: ${paramsId}`);
 });
 
 const items = [
@@ -31,7 +40,7 @@ const items = [
           : "Profile"
       }`,
       icon: "i-heroicons-pencil-square-20-solid",
-      class: `${authId === userId ? "flex" : "hidden"}`,
+      class: `${authId === paramsId ? "flex" : "hidden"}`,
       click: () => {
         emit("openModal", true);
       },
@@ -99,6 +108,72 @@ async function unfollow(userId, currentUserId) {
   }
   emit("isRefetch", true);
 }
+
+async function liking(id, currentUserId) {
+  emit("isPending", true);
+
+  if (type === "playlist") {
+    try {
+      await useFetch(`/api/liking-playlist`, {
+        method: "patch",
+        body: {
+          playlistId: id,
+          userProfileId: currentUserId,
+        },
+      });
+    } catch (error) {
+      console.log(`error updating user: ${error}`);
+    }
+  }
+  if (type === "album") {
+    try {
+      await useFetch(`/api/liking-album`, {
+        method: "patch",
+        body: {
+          albumId: id,
+          userProfileId: currentUserId,
+        },
+      });
+    } catch (error) {
+      console.log(`error updating user: ${error}`);
+    }
+  }
+
+  emit("isRefetch", true);
+}
+
+async function unlike(id, currentUserId) {
+  emit("isPending", true);
+
+  if (type === "playlist") {
+    try {
+      await useFetch(`/api/unlike-playlist`, {
+        method: "patch",
+        body: {
+          playlistId: id,
+          userProfileId: currentUserId,
+        },
+      });
+    } catch (error) {
+      console.log(`error updating user: ${error}`);
+    }
+  }
+  if (type === "album") {
+    try {
+      await useFetch(`/api/unlike-album`, {
+        method: "patch",
+        body: {
+          albumId: id,
+          userProfileId: currentUserId,
+        },
+      });
+    } catch (error) {
+      console.log(`error updating user: ${error}`);
+    }
+  }
+
+  emit("isRefetch", true);
+}
 </script>
 
 <template>
@@ -117,7 +192,7 @@ async function unfollow(userId, currentUserId) {
 
     <!-- follow/unfollow -->
     <UButton
-      v-show="userId !== authId"
+      v-show="paramsId !== authId && type === 'user'"
       size="xl"
       :ui="{
         rounded: 'rounded-full',
@@ -131,7 +206,9 @@ async function unfollow(userId, currentUserId) {
       />
       <p
         v-else
-        @click="isFollowed ? unfollow(userId, authId) : follow(userId, authId)"
+        @click="
+          isFollowed ? unfollow(paramsId, authId) : follow(paramsId, authId)
+        "
         class="px-3 text-white"
       >
         {{ isFollowed ? "Following" : "Follow" }}
@@ -139,11 +216,22 @@ async function unfollow(userId, currentUserId) {
     </UButton>
 
     <!-- like/unlike -->
-    <UIcon
-      v-show="type !== 'user'"
-      class="text-3xl bg-gray-400 hover:scale-110 hover:bg-gray-200 transition-all ease-out duration-150 z-20 cursor-pointer focus:scale-100 active:scale-95"
-      name="i-ph-heart"
-    />
+
+    <div v-show="type === 'playlist' || type === 'album'" class="-mb-1">
+      <UIcon
+        v-if="pending"
+        class="bg-green-500 animate-spin text-xl px-5"
+        name="i-ph-circle-notch-bold"
+      />
+      <div v-else>
+        <UIcon
+          @click="liking(paramsId, authId)"
+          class="text-3xl hover:scale-110 transition-all ease-out duration-150 z-20 cursor-pointer focus:scale-100 active:scale-95"
+          :class="isLiked ? 'bg-green-500' : 'bg-gray-400 hover:bg-gray-200'"
+          :name="isLiked ? 'i-ph-heart-fill' : 'i-ph-heart'"
+        />
+      </div>
+    </div>
 
     <!-- user option? -->
     <UDropdown

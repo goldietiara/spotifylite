@@ -52,7 +52,7 @@ watchEffect(() => {
         </div>
         <div class="flex flex-col gap-5 text-sm font-light z-20 self-end">
           <p>Playlist</p>
-          <h1 class="text-6xl font-bold">Liked Playlist</h1>
+          <h1 class="text-6xl font-bold">Liked Songs</h1>
 
           <div class="flex items-center gap-1">
             <div

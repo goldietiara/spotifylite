@@ -4,14 +4,23 @@ import { useAlbumStore } from "~/stores/album";
 
 ///get logged in user
 const authStore = useAuthStore();
-const { currentUser, likedSongs, userProfile, userPlaylist, refetch, pending } =
-  storeToRefs(authStore);
+const {
+  currentUser,
+  likedSongs,
+  userProfile,
+  userPlaylist,
+  refetch,
+  pending,
+  likedAlbum,
+} = storeToRefs(authStore);
 ///get current playlist
 const albumStore = useAlbumStore();
 const { album, albumSongs, albumOwner, refetchAlbum } = storeToRefs(albumStore);
 
 const bgColor = ref("");
 const isOpen = ref(false);
+const route = useRoute();
+const albumId = parseInt(route.params.id);
 
 ///search functionality
 const q = ref("");
@@ -50,6 +59,15 @@ const getImageColor = async (image) => {
 watchEffect(async () => {
   await getImageColor(album.value.image);
 });
+
+//checked if the playlist is liked by logged user
+const isAlbumLiked = computed(() => {
+  if (!likedAlbum) return;
+  const isLiked = likedAlbum.value.find((v) => v.id === albumId);
+  if (isLiked) {
+    return true;
+  } else return false;
+});
 </script>
 
 <template>
@@ -71,7 +89,16 @@ watchEffect(async () => {
         <div class="w-full h-[500px] bg-zinc-900/20 absolute top-0 z-0"></div>
         <div class="py-3 px-6 flex flex-col gap-5">
           <div class="flex px-3 py-3.5 pt-5 justify-between items-center">
-            <PlayerDetailFollow :type="'album'" @open-modal="isOpen = true" />
+            <PlayerDetailFollow
+              :type="'album'"
+              :authId="parseInt(currentUser.id)"
+              :paramsId="albumId"
+              :isLiked="isAlbumLiked"
+              :pending="pending"
+              :onIsPending="() => (pending = true)"
+              :onIsRefetch="() => (refetch = true)"
+              @open-modal="isOpen = true"
+            />
 
             <div
               class="mr-0 h-[32px] w-[32px] rounded-full flex justify-center items-center hover:bg-white/10 hover:cursor-pointer transition-all duration-300"
@@ -109,7 +136,6 @@ watchEffect(async () => {
               :onIsRefetch="() => (refetchAlbum = true)"
             />
           </UModal>
-
           <Table
             :type="'album'"
             :likedSongs="isLiked"

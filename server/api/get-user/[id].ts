@@ -17,9 +17,9 @@ export default defineEventHandler(async (event) => {
           likedPlaylist: true,
         },
       },
-      playlist: true,
-      followers: true,
-      following: true,
+      playlist: { orderBy: { id: "desc" } },
+      followers: { orderBy: { id: "desc" } },
+      following: { orderBy: { id: "desc" } },
     },
   });
 

@@ -68,7 +68,7 @@ const ifFollowed = computed(() => {
             :artistId="userById.artistId"
             :type="'user'"
             :authId="parseInt(currentUser.id)"
-            :userId="parseInt(userId)"
+            :paramsId="userId"
             :isFollowed="ifFollowed"
             :pending="pending"
             :onIsPending="() => (pending = true)"

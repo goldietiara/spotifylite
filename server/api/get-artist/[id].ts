@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
     where: {
       id: parseInt(id),
     },
-    include: { album: true },
+    include: { album: { orderBy: { id: "desc" } } },
   });
 
   return result;

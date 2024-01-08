@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
       email: email as string,
     },
     include: {
-      playlist: true,
+      playlist: { orderBy: { id: "desc" } },
       userProfile: {
         include: {
           likedSongs: { include: { Album: { include: { Artist: true } } } },

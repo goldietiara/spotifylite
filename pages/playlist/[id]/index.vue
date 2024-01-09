@@ -15,8 +15,14 @@ const {
 } = storeToRefs(authStore);
 ///get current playlist
 const playlistStore = usePlaylistStore();
-const { playlist, playlistSongs, playlistOwner, refetchPlaylist } =
-  storeToRefs(playlistStore);
+const {
+  playlist,
+  playlistSongs,
+  playlistOwner,
+  refetchPlaylist,
+  totalPlaylistLikes,
+  totalPlaylistSongs,
+} = storeToRefs(playlistStore);
 
 const route = useRoute();
 const playlistId = parseInt(route.params.id);
@@ -93,6 +99,8 @@ const isPlaylistLiked = computed(() => {
         :type="'playlist'"
         :data="playlist"
         :owner="playlistOwner"
+        :totalLikes="totalPlaylistLikes"
+        :totalSongs="totalPlaylistSongs"
       />
 
       <div class="mt-10 relative">

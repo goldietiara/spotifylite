@@ -18,6 +18,9 @@ const {
   userByIdFollowing,
   userByIdFollowers,
   refetchUserById,
+  totalFollowers,
+  totalFollowing,
+  totalPlaylist,
 } = storeToRefs(userStore);
 
 const isOpen = ref(false);
@@ -58,7 +61,13 @@ const ifFollowed = computed(() => {
     ></div>
 
     <section class="z-20 pt-20">
-      <CardsPlaylistProfileHeader :type="'user'" :data="userById" />
+      <CardsPlaylistProfileHeader
+        :type="'user'"
+        :data="userById"
+        :totalFollowers="totalFollowers"
+        :totalFollowing="totalFollowing"
+        :totalPlaylist="totalPlaylist"
+      />
 
       <div class="mt-10 relative">
         <div class="w-full h-[500px] bg-zinc-900/20 absolute top-0 z-0"></div>

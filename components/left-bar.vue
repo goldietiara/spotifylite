@@ -29,9 +29,9 @@ const {
   likedPlaylist,
   following,
   followers,
-  userIsArtist,
   refetch,
   pending,
+  totalLikedSongs,
 } = storeToRefs(authStore);
 
 ///user store
@@ -44,18 +44,35 @@ const {
   userByIdFollowing,
   userByIdFollowers,
   refetchUserById,
+  totalFollowers,
+  totalFollowing,
+  totalPlaylist,
+  userIsArtist,
 } = storeToRefs(userStore);
 
 ///playlist store
 const playlistStore = usePlaylistStore();
 const { getCurrentPlaylist } = playlistStore;
-const { playlist, playlistSongs, playlistOwner, refetchPlaylist } =
-  storeToRefs(playlistStore);
+const {
+  playlist,
+  playlistSongs,
+  playlistOwner,
+  refetchPlaylist,
+  totalPlaylistLikes,
+  totalPlaylistSongs,
+} = storeToRefs(playlistStore);
 
 ///album store
 const albumStore = useAlbumStore();
 const { getCurrentAlbum } = albumStore;
-const { album, albumSongs, albumOwner, refetchAlbum } = storeToRefs(albumStore);
+const {
+  album,
+  albumSongs,
+  albumOwner,
+  refetchAlbum,
+  totalAlbumSongs,
+  totalAlbumLikes,
+} = storeToRefs(albumStore);
 
 ///artist store
 const artistStore = useArtistStore();
@@ -255,6 +272,7 @@ watch(currentUser, () => {
   likedSongs.value = userProfile.value.likedSongs;
   likedPlaylist.value = userProfile.value.likedPlaylist;
   likedAlbum.value = userProfile.value.likedAlbum;
+  totalLikedSongs.value = userProfile.value._count.likedSongs;
   following.value = currentUser.value.following;
   followers.value = currentUser.value.followers;
 });
@@ -263,6 +281,7 @@ watchEffect(async () => {
   console.log(currentUser.value);
   console.log(route.name);
   if (route.name === "playlist-id") {
+    // playlist.value = null; //FIX LATER: FIND THE CORRECT WAY
     await getPlaylist(route.params.id);
   } else if (route.name === "album-id") {
     await getAlbum(route.params.id);
@@ -282,12 +301,16 @@ watchEffect(async () => {
 watch(playlist, () => {
   playlistOwner.value = playlist.value.author;
   playlistSongs.value = playlist.value.songs;
+  totalPlaylistLikes.value = playlist.value._count.likes;
+  totalPlaylistSongs.value = playlist.value._count.songs;
   console.log(playlist.value);
 });
 
 watch(album, () => {
   albumOwner.value = album.value.Artist;
   albumSongs.value = album.value.songs;
+  totalAlbumSongs.value = album.value._count.songs;
+  totalAlbumLikes.value = album.value._count.likes;
   console.log(album.value);
 });
 
@@ -317,6 +340,9 @@ watch(userById, () => {
   userByIdPlaylist.value = userById.value.playlist;
   userByIdFollowing.value = userById.value.following;
   userByIdFollowers.value = userById.value.followers;
+  totalFollowers.value = userById.value._count.followers;
+  totalFollowing.value = userById.value._count.following;
+  totalPlaylist.value = userById.value._count.playlist;
 
   console.log(userById.value);
 });

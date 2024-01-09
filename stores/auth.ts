@@ -13,8 +13,9 @@ export const useAuthStore = defineStore("auth", {
     following: [],
     followers: [],
     userIsArtist: {},
-    refetch: false,
+    totalLikedSongs: 0,
     pending: false,
+    refetch: false,
   }),
 
   actions: {

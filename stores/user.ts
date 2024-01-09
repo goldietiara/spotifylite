@@ -10,6 +10,9 @@ export const useUserStore = defineStore("user", {
     userByIdFollowing: [],
     userByIdFollowers: [],
     refetchUserById: false,
+    totalFollowers: 0,
+    totalFollowing: 0,
+    totalPlaylist: 0,
   }),
 
   actions: {

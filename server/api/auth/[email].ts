@@ -11,6 +11,7 @@ export default defineEventHandler(async (event) => {
     include: {
       userProfile: {
         include: {
+          _count: { select: { likedSongs: true } },
           likedSongs: {
             include: { Album: { include: { Artist: true } } },
           },

@@ -2,8 +2,15 @@
 import Table from "../../../components/table.vue";
 
 const authStore = useAuthStore();
-const { currentUser, likedSongs, userProfile, userPlaylist, refetch, pending } =
-  storeToRefs(authStore);
+const {
+  currentUser,
+  likedSongs,
+  userProfile,
+  userPlaylist,
+  totalLikedSongs,
+  refetch,
+  pending,
+} = storeToRefs(authStore);
 
 /// FIX LATER: refetch data when unlike songs
 
@@ -72,7 +79,9 @@ watchEffect(() => {
 
             <UIcon name="i-ph-dot-outline-fill" />
             <p v-if="likedSongs && likedSongs.length">
-              {{ `${likedSongs.length} songs` }}
+              {{
+                `${totalLikedSongs} ${totalLikedSongs > 1 ? "songs" : "song"}`
+              }}
             </p>
             <USkeleton v-else class="w-[50px] h-[20px]" />
           </div>

@@ -234,7 +234,7 @@ const playlist = [
             class="bg-green-500 animate-spin text-xl"
             name="i-ph-circle-notch-bold"
           />
-          <div v-else>
+          <div v-else class="-mb-1">
             <UIcon
               v-if="likedSongs(row.id)"
               @click="UnLike(row.id, userId)"

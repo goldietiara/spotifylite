@@ -7,6 +7,8 @@ export const useAlbumStore = defineStore("album", {
     album: {},
     albumSongs: [],
     albumOwner: {},
+    totalAlbumSongs: 0,
+    totalAlbumLikes: 0,
     refetchAlbum: false,
   }),
 

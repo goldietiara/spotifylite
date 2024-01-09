@@ -20,6 +20,7 @@ export default defineEventHandler(async (event) => {
       playlist: { orderBy: { id: "desc" } },
       followers: { orderBy: { id: "desc" } },
       following: { orderBy: { id: "desc" } },
+      _count: { select: { followers: true, following: true, playlist: true } },
     },
   });
 

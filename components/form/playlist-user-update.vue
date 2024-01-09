@@ -7,10 +7,11 @@ import type { FormSubmitEvent } from "#ui/types";
 const runtimeConfig = useRuntimeConfig();
 const client = useSupabaseClient();
 
-const { data, type } = defineProps(["data", "type"]);
+const { data, type, refetch } = defineProps(["data", "type", "refetch"]);
 
 const load = ref(false);
 const files = ref("");
+console.log(files.value);
 const form = ref();
 const emit = defineEmits(["closeModal", "isRefetch"]);
 
@@ -60,7 +61,7 @@ const uploadImage = (e: any) => {
 
 ///update user or playlist function
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  let newImage = null;
+  let newImage = event.data.imageName;
   load.value = true;
 
   if (files.value) {
@@ -83,8 +84,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         method: "patch",
         body: {
           name: event.data.name,
-          image: runtimeConfig.public.bucketUrl + newImage,
           imageName: newImage,
+          image: runtimeConfig.public.bucketUrl + newImage,
           description: event.data.description,
         },
       });
@@ -102,8 +103,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         method: "patch",
         body: {
           name: event.data.name,
-          image: runtimeConfig.public.bucketUrl + newImage,
           imageName: newImage,
+          image: runtimeConfig.public.bucketUrl + newImage,
         },
       });
       load.value = false;
@@ -113,6 +114,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       load.value = false;
     }
   }
+
   emit("isRefetch", true);
 }
 </script>

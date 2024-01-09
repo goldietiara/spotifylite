@@ -15,7 +15,14 @@ const {
 } = storeToRefs(authStore);
 ///get current playlist
 const albumStore = useAlbumStore();
-const { album, albumSongs, albumOwner, refetchAlbum } = storeToRefs(albumStore);
+const {
+  album,
+  albumSongs,
+  albumOwner,
+  refetchAlbum,
+  totalAlbumLikes,
+  totalAlbumSongs,
+} = storeToRefs(albumStore);
 
 const bgColor = ref("");
 const isOpen = ref(false);
@@ -83,6 +90,8 @@ const isAlbumLiked = computed(() => {
       <CardsPlaylistProfileHeader
         :type="'album'"
         :data="album"
+        :totalLikes="totalAlbumLikes"
+        :totalSongs="totalAlbumSongs"
         :owner="albumOwner"
       />
       <div class="mt-10 relative">

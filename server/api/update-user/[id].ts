@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
     data: {
       name: body.name,
       image: body.image,
-      imageName: body.image,
+      imageName: body.imageName,
     },
   });
 

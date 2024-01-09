@@ -225,7 +225,7 @@ async function unlike(id, currentUserId) {
       />
       <div v-else>
         <UIcon
-          @click="liking(paramsId, authId)"
+          @click="isLiked ? unlike(paramsId, authId) : liking(paramsId, authId)"
           class="text-3xl hover:scale-110 transition-all ease-out duration-150 z-20 cursor-pointer focus:scale-100 active:scale-95"
           :class="isLiked ? 'bg-green-500' : 'bg-gray-400 hover:bg-gray-200'"
           :name="isLiked ? 'i-ph-heart-fill' : 'i-ph-heart'"

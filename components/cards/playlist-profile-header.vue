@@ -1,5 +1,24 @@
 <script setup>
-const { type, data, owner } = defineProps(["type", "data", "owner"]);
+const {
+  type,
+  data,
+  owner,
+  totalFollowers,
+  totalFollowing,
+  totalLikes,
+  totalSongs,
+  totalPlaylist,
+} = defineProps([
+  "type",
+  "data",
+  "owner",
+  "totalFollowers",
+  "totalFollowing",
+  "totalLikes",
+  "totalSongs",
+  "totalPlaylist",
+]);
+
 const router = useRouter();
 const go = (id) => {
   if (type === "playlist") {
@@ -79,7 +98,9 @@ const go = (id) => {
         >
           {{
             type === "user"
-              ? `Public Playlist ${data.playlist ? data.playlist.length : 0}`
+              ? `${totalPlaylist} ${
+                  totalPlaylist > 1 ? "Public Playlists" : "Public Playlist"
+                }`
               : owner.name
           }}
         </p>
@@ -92,7 +113,11 @@ const go = (id) => {
             type === 'user' &&
             ' hover:underline hover:underline-offset-4 hover:cursor-pointer'
           "
-          >{{ type === "user" ? `50 Followers` : `1 like` }}</a
+          >{{
+            type === "user"
+              ? `${totalFollowers} Followers`
+              : `${totalLikes} ${like > 1 ? "likes" : "like"}`
+          }}</a
         >
         <UIcon name="i-ph-dot-outline-fill" />
         <p
@@ -104,8 +129,8 @@ const go = (id) => {
         >
           {{
             type === "user"
-              ? `50 Following`
-              : `${data.songs ? data.songs.length : 0} songs`
+              ? `${totalFollowing} Following`
+              : `${totalSongs} ${totalSongs > 1 ? "songs" : "song"}`
           }}
         </p>
         <USkeleton v-else class="w-[50px] h-[20px]" />

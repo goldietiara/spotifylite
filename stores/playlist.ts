@@ -7,6 +7,8 @@ export const usePlaylistStore = defineStore("playlist", {
     playlist: {},
     playlistSongs: [],
     playlistOwner: {},
+    totalPlaylistSongs: 0,
+    totalPlaylistLikes: 0,
     refetchPlaylist: false,
   }),
 

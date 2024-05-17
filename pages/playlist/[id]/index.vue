@@ -110,7 +110,7 @@ const isPlaylistLiked = computed(() => {
             <PlayerDetailFollow
               :type="'playlist'"
               :authId="parseInt(currentUser.id)"
-              :paramsId="playlistId"
+              :paramsId="playlistOwner.id"
               :isLiked="isPlaylistLiked"
               :pending="pending"
               :onIsPending="() => (pending = true)"

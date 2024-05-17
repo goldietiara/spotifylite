@@ -16,6 +16,7 @@ export default defineNuxtConfig({
   primevue: {
     options: {
       ripple: true,
+      unstyled: true,
     },
     cssLayerOrder: "tailwind-base, primevue, tailwind-utilities",
     components: {
@@ -23,7 +24,7 @@ export default defineNuxtConfig({
       include: "*",
     },
   },
-  css: ["primevue/resources/themes/lara-light-teal/theme.css"],
+  // css: ["primevue/resources/themes/lara-light-teal/theme.css"],
 
   ui: {
     icons: ["majesticons", "heroicons", "ph"],

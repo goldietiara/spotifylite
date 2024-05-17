@@ -7,7 +7,6 @@ export default defineNuxtConfig({
     "@nuxtjs/supabase",
     "@nuxtjs/tailwindcss",
   ],
-  css: ["primevue/resources/themes/lara-light-teal/theme.css"],
   runtimeConfig: {
     public: {
       bucketUrl: process.env.BUCKET_URL,
@@ -17,13 +16,16 @@ export default defineNuxtConfig({
   primevue: {
     options: {
       ripple: true,
+      unstyled: true,
     },
     cssLayerOrder: "tailwind-base, primevue, tailwind-utilities",
     components: {
-      prefix: "Prime",
+      // prefix: "Prime",
       include: "*",
     },
   },
+  // css: ["primevue/resources/themes/lara-light-teal/theme.css"],
+
   ui: {
     icons: ["majesticons", "heroicons", "ph"],
   },

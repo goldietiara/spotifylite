@@ -22,7 +22,6 @@ export default defineNuxtConfig({
     components: {
       // prefix: "Prime",
       exclude: ["Editor", "Chart"],
-
       include: "*",
     },
   },

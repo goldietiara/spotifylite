@@ -1,6 +1,10 @@
 <script setup>
-import Splitter from "../node_modules/primevue/splitter";
-import SplitterPanel from "../node_modules/primevue/splitterpanel";
+// import Splitter from "../node_modules/primevue/splitter";
+// import SplitterPanel from "../node_modules/primevue/splitterpanel";
+
+import Splitter from "primevue/splitter";
+import SplitterPanel from "primevue/splitterpanel";
+
 import NavBar from "../components/nav-bar.vue";
 import Footer from "../components/footer.vue";
 </script>

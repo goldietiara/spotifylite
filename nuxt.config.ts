@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     cssLayerOrder: "tailwind-base, primevue, tailwind-utilities",
     components: {
       // prefix: "Prime",
+      exclude: ["Editor", "Chart"],
       include: "*",
     },
   },

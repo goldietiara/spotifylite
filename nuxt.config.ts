@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     "@nuxtjs/supabase",
     "@nuxtjs/tailwindcss",
   ],
-  css: ["primevue/resources/themes/lara-light-teal/theme.css"],
+  // css: ["primevue/resources/themes/lara-light-teal/theme.css"],
   runtimeConfig: {
     public: {
       bucketUrl: process.env.BUCKET_URL,

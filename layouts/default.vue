@@ -1,11 +1,11 @@
 <script setup>
-import Splitter from "../node_modules/primevue/splitter";
-import SplitterPanel from "../node_modules/primevue/splitterpanel";
+// import Splitter from "../node_modules/primevue/splitter";
+// import SplitterPanel from "../node_modules/primevue/splitterpanel";
 import NavBar from "../components/nav-bar.vue";
 import Footer from "../components/footer.vue";
 </script>
 <template>
-  <Splitter
+  <PrimeSplitter
     class="h-screen"
     :pt="{
       root: {
@@ -19,7 +19,7 @@ import Footer from "../components/footer.vue";
       gutterHandler: { class: 'bg-transparent' },
     }"
   >
-    <SplitterPanel
+    <PrimeSplitterPanel
       class="flex align-items-center justify-content-center"
       :size="20"
       :minSize="10"
@@ -27,8 +27,8 @@ import Footer from "../components/footer.vue";
       <div class="w-full">
         <LeftBar />
       </div>
-    </SplitterPanel>
-    <SplitterPanel
+    </PrimeSplitterPanel>
+    <PrimeSplitterPanel
       class="flex align-items-center justify-content-center relative"
       :size="80"
     >
@@ -38,6 +38,6 @@ import Footer from "../components/footer.vue";
         <NavBar />
         <slot></slot>
       </div>
-    </SplitterPanel>
-  </Splitter>
+    </PrimeSplitterPanel>
+  </PrimeSplitter>
 </template>
